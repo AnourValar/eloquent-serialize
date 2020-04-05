@@ -1,7 +1,7 @@
 {
     "name": "anourvalar/eloquent-serialize",
     "description": "QueryBuilder (Eloquent) serialization",
-    "keywords": ["laravel", "query", "builder" "querybuilder", "anourvalar", "serialize", "serialization", "eloquent"],
+    "keywords": ["laravel", "query", "builder", "querybuilder", "anourvalar", "serialize", "serialization", "eloquent"],
     "homepage": "https://github.com/AnourValar/eloquent-serialize",
     "license": "MIT",
     "require": {
