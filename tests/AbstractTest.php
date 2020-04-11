@@ -48,6 +48,15 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $table->string('phone');
             $table->timestamps();
         });
+
+        $app['db']->connection()->getSchemaBuilder()->create('posts', function (Blueprint $table)
+        {
+            $table->increments('id');
+            $table->integer('user_id');
+            $table->string('title');
+            $table->text('body');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -56,17 +65,17 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
      */
     protected function compare(\Illuminate\Database\Eloquent\Builder $builder) : void
     {
-        $package = $this->service->serialize($builder);
-        $package = $this->service->unserialize($package);
+        for ($i = 1; $i <= 2; $i++) {
+            $package = $this->service->serialize($package ?? $builder);
+            $package = json_encode($package);
 
-        $package = $this->service->serialize($package);
-        $package = json_encode($package);
-        $package = json_decode($package, true);
-        $package = $this->service->unserialize($package);
+            $package = json_decode($package, true);
+            $package = $this->service->unserialize($package);
 
-        $builder = $this->getScheme($builder);
-        $package = $this->getScheme($package);
-        $this->assertTrue($builder == $package, "Builder:\n$builder\n\nPackage:\n$package\n\n");
+            $original = $this->getScheme($builder);
+            $repacked = $this->getScheme($package);
+            $this->assertTrue($original == $repacked, "#$i:\n Builder:\n$original\n\nPackage:\n$repacked\n\n");
+        }
     }
 
     /**
@@ -76,7 +85,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
     private function getScheme(\Illuminate\Database\Eloquent\Builder $builder) : string
     {
         \DB::flushQueryLog();
-        $builder->get();
+        $result = $builder->get();
         $logs = \DB::getQueryLog();
 
         foreach ($logs as &$log) {
@@ -84,6 +93,6 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
         }
         unset($log);
 
-        return json_encode($logs, JSON_PRETTY_PRINT);
+        return json_encode(['query' => $logs, 'result' => $result], JSON_PRETTY_PRINT);
     }
 }

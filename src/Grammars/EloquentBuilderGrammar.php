@@ -2,35 +2,20 @@
 
 namespace AnourValar\EloquentSerialize\Grammars;
 
-class EloquentBuilderGrammar
+trait EloquentBuilderGrammar
 {
-    /**
-     * @var \AnourValar\EloquentSerialize\Grammars\QueryBuilderGrammar
-     */
-    private $queryBuilderGrammar;
-
-    /**
-     * DI
-     *
-     * @param \AnourValar\EloquentSerialize\Grammars\QueryBuilderGrammar $queryBuilderGrammar
-     * @return void
-     */
-    public function __construct(\AnourValar\EloquentSerialize\Grammars\QueryBuilderGrammar $queryBuilderGrammar)
-    {
-        $this->queryBuilderGrammar = $queryBuilderGrammar;
-    }
-
     /**
      * Serialize state for \Illuminate\Database\Eloquent\Builder
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return array
      */
-    public function pack(\Illuminate\Database\Eloquent\Builder $builder) : array
+    protected function packEloquentBuilder(\Illuminate\Database\Eloquent\Builder $builder) : array
     {
         return [
             'with' => $this->getEagers($builder), // preloaded ("eager") relations
             'removed_scopes' => $builder->removedScopes(), // global scopes
+            'casts' => $builder->getModel()->getCasts(),
         ];
     }
 
@@ -41,7 +26,7 @@ class EloquentBuilderGrammar
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return void
      */
-    public function unpack(array $data, \Illuminate\Database\Eloquent\Builder &$builder) : void
+    protected function unpackEloquentBuilder(array $data, \Illuminate\Database\Eloquent\Builder &$builder) : void
     {
         // Preloaded ("eager") relations
         $this->setEagers($builder, $data['with']);
@@ -49,6 +34,11 @@ class EloquentBuilderGrammar
         // Global scopes
         if ($data['removed_scopes']) {
             $builder->withoutGlobalScopes($data['removed_scopes']);
+        }
+
+        // Casts
+        if (method_exists($builder->getModel(), 'mergeCasts')) { // old versions support
+            $builder->getModel()->mergeCasts($data['casts']);
         }
     }
 
@@ -62,7 +52,7 @@ class EloquentBuilderGrammar
 
         foreach ($builder->getEagerLoads() as $name => $value) {
             $model = get_class($builder->getModel());
-            $query =  \Illuminate\Database\Eloquent\Relations\HasMany::noConstraints(function() use ($model, $name)
+            $query = \Illuminate\Database\Eloquent\Relations\HasMany::noConstraints(function() use ($model, $name)
             {
                 $object = null;
 
@@ -80,7 +70,7 @@ class EloquentBuilderGrammar
             });
 
             $value($query);
-            $result[$name] = $this->queryBuilderGrammar->pack($query->getQuery());
+            $result[$name] = $this->packQueryBuilder($query->getQuery());
         }
 
         return $result;
@@ -101,7 +91,7 @@ class EloquentBuilderGrammar
                     $query = $query->getQuery();
                 }
 
-                $this->queryBuilderGrammar->unpack($value, $query);
+                $this->unpackQueryBuilder($value, $query);
             };
         }
         unset($value);
