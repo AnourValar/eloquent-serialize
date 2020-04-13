@@ -1,3 +1,12 @@
+# Serialization for Eloquent's QueryBuilder
+
+## Installation
+
+```bash
+composer require anourvalar/eloquent-serialize
+```
+
+
 ## Usage
 
 ### Serialize
@@ -9,6 +18,7 @@ $package = \EloquentSerialize::serialize(
         ->limit(20)
 ));
 ```
+
 
 ### Unserialize
 ```php
