@@ -25,7 +25,7 @@ class Service
      * Unpack
      *
      * @param mixed $package
-     * @throws \Exception
+     * @throws \LogicException
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function unserialize($package) : \Illuminate\Database\Eloquent\Builder
@@ -35,7 +35,7 @@ class Service
             $package = unserialize($package);
         }
         if (! ($package instanceof Package)) {
-            throw new \Exception('Incorrect argument.');
+            throw new \LogicException('Incorrect argument.');
         }
 
         // Unpack
