@@ -2,6 +2,7 @@
 
 namespace AnourValar\EloquentSerialize\Tests;
 
+use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
 use Illuminate\Database\Schema\Blueprint;
 
 abstract class AbstractTest extends \Orchestra\Testbench\TestCase
@@ -20,7 +21,10 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
 
+        $this->withFactories(__DIR__.'/factories');
         $this->setUpDatabase($this->app);
+        $this->setUpSeeder();
+
         \DB::enableQueryLog();
 
         $this->service = \App::make(\AnourValar\EloquentSerialize\Service::class);
@@ -46,6 +50,15 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $table->increments('id');
             $table->integer('user_id');
             $table->string('phone');
+            $table->boolean('is_primary');
+            $table->timestamps();
+        });
+
+        $app['db']->connection()->getSchemaBuilder()->create('user_phone_notes', function (Blueprint $table)
+        {
+            $table->increments('id');
+            $table->integer('user_phone_id');
+            $table->string('note');
             $table->timestamps();
         });
 
@@ -60,12 +73,22 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
     }
 
     /**
+     * @return void
+     */
+    protected function setUpSeeder()
+    {
+        for ($i = 0; $i < 80; $i++) {
+            factory(UserPhoneNote::class)->create();
+        }
+    }
+
+    /**
      * @param \Illuminate\Database\Eloquent\Builder
      * @return void
      */
     protected function compare(\Illuminate\Database\Eloquent\Builder $builder) : void
     {
-        for ($i = 1; $i <= 2; $i++) {
+        for ($i = 1; $i <= 3; $i++) {
             $package = $this->service->serialize($package ?? $builder);
             $package = json_encode($package);
 

@@ -51,26 +51,10 @@ trait EloquentBuilderGrammar
         $result = [];
 
         foreach ($builder->getEagerLoads() as $name => $value) {
-            $model = get_class($builder->getModel());
-            $query = \Illuminate\Database\Eloquent\Relations\HasMany::noConstraints(function() use ($model, $name)
-            {
-                $object = null;
+            $relation = $builder->getRelation($name); // get relation without "constraints"
+            $value($relation); // apply closure
 
-                foreach (explode('.', $name) as $name) {
-                    if (! isset($object)) {
-                        $object = new $model;
-                    } else {
-                        $object = $object->getModel();
-                    }
-
-                    $object = $object->$name();
-                }
-
-                return $object->getQuery()->newQuery();
-            });
-
-            $value($query);
-            $result[$name] = $this->packQueryBuilder($query->getQuery());
+            $result[$name] = $this->packQueryBuilder($relation->getQuery()->getQuery());
         }
 
         return $result;
@@ -90,6 +74,8 @@ trait EloquentBuilderGrammar
                 while (! ($query instanceof \Illuminate\Database\Query\Builder)) {
                     $query = $query->getQuery();
                 }
+
+                $query->joins = null; // "no constraints" issue
 
                 $this->unpackQueryBuilder($value, $query);
             };

@@ -84,4 +84,110 @@ class EagerTest extends AbstractTest
             }])
         );
     }
+
+    /**
+     * @return void
+     */
+    public function testWithCountAlias()
+    {
+        // simple
+        $this->compare(
+            User::withCount('userPhones as test')
+        );
+
+        // builder
+        $this->compare(
+            User::withCount([
+                'userPhones as primary' => function ($query)
+                {
+                    $query->where(function ($query)
+                    {
+                        $query->where('is_primary', true);
+                    });
+                },
+                'userPhones as not_primary' => function ($query)
+                {
+                    $query->where('is_primary', false);
+                }
+            ])
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testBelongs()
+    {
+        // simple
+        $this->compare(
+            UserPhone::with('user')
+        );
+
+        // simple count
+        $this->compare(
+            UserPhone::withCount('user')
+        );
+
+        // builder
+        $this->compare(
+            UserPhone::with([
+                'user' => function ($query)
+                {
+                    $query->where('title', '=', 'admin')->limit(1);
+                }
+            ])
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testHasManyThrough()
+    {
+        // simple
+        $this->compare(
+            User::with('userPhoneNote')
+        );
+
+        // simple count
+        $this->compare(
+            User::withCount('userPhoneNote')
+        );
+
+        // builder
+        $this->compare(
+            User::with([
+                'userPhoneNote' => function ($query)
+                {
+                    $query->limit(1);
+                }
+            ])
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testHasOne()
+    {
+        // simple
+        $this->compare(
+            UserPhone::with('userPhoneNote')
+        );
+
+        // simple count
+        $this->compare(
+            UserPhone::withCount('userPhoneNote')
+        );
+
+        // builder
+        $this->compare(
+            UserPhone::with([
+                'userPhoneNote' => function ($query)
+                {
+                    $query->whereNotNull('note');
+                }
+            ])
+        );
+    }
 }
