@@ -83,7 +83,7 @@ class WhereTest extends AbstractTest
         $this->compare(
             User::whereHas('userPhones', function ($query)
             {
-                $query->where('created_at', '>=', '2020-01-01');
+                $query->where('created_at', '>=', '2010-01-01');
             })
         );
 
@@ -96,7 +96,7 @@ class WhereTest extends AbstractTest
                     $query->where(function ($query)
                     {
                         $query
-                            ->where('created_at', '>=', '2020-01-01')
+                            ->where('created_at', '>=', '2010-01-01')
                             ->orWhere('id', '=', '1');
                     });
                 });
@@ -116,7 +116,7 @@ class WhereTest extends AbstractTest
         $this->compare(
             User::whereDoesnthave('userPhones', function ($query)
             {
-                $query->where('created_at', '>=', '2020-01-01');
+                $query->where('created_at', '>=', '2010-01-01');
             })
         );
 
@@ -129,7 +129,7 @@ class WhereTest extends AbstractTest
                     $query->where(function ($query)
                     {
                         $query
-                            ->where('created_at', '>=', '2020-01-01')
+                            ->where('created_at', '>=', '2010-01-01')
                             ->orWhere('id', '=', '1');
                     });
                 });

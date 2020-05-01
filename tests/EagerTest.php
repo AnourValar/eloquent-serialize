@@ -38,7 +38,7 @@ class EagerTest extends AbstractTest
             {
                 $query->where(function ($query)
                 {
-                    $query->where('phone', '=', '111')->orWhere('phone', '=', '222');
+                    $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
                 });
             }])
         );
@@ -53,7 +53,7 @@ class EagerTest extends AbstractTest
                         ->where('phone', '=', '111')
                         ->orWhere(function ($query)
                         {
-                            $query->where('phone', '=', '222')->orWhere('created_at', '>', '2020-01-01');
+                            $query->where('phone', '=', '222')->orWhere('created_at', '>', '2010-01-01');
                         });
                 });
             }])
@@ -79,7 +79,7 @@ class EagerTest extends AbstractTest
             {
                 $query->where(function ($query)
                 {
-                    $query->where('phone', '=', '111')->orWhere('phone', '=', '222');
+                    $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
                 });
             }])
         );

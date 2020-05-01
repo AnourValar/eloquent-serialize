@@ -52,7 +52,7 @@ class UnionTest extends AbstractTest
                 $query->where(function ($query)
                 {
                     $query
-                        ->where('created_at', '>=', '2020-01-01')
+                        ->where('created_at', '>=', '2010-01-01')
                         ->orWhere('id', '=', '1');
                 });
             });
@@ -60,7 +60,7 @@ class UnionTest extends AbstractTest
 
         $union2 = User::whereHas('userPhones', function ($query)
         {
-            $query->where('created_at', '>=', '2020-01-01');
+            $query->where('created_at', '>=', '2010-01-01');
         });
 
         $union2 = User::union($union2)->where(function ($query)
@@ -81,7 +81,7 @@ class UnionTest extends AbstractTest
         });
 
         $this->compare(
-            User::whereIn('title', ['a', 'b'])->union($union1)->union($union2, true)
+            User::whereNotIn('title', ['a', 'b'])->union($union1)->union($union2, true)
         );
     }
 }
