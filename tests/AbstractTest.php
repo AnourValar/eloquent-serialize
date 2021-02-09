@@ -17,7 +17,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
      *
      * @return void
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -86,7 +86,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
      * @param \Illuminate\Database\Eloquent\Builder
      * @return void
      */
-    protected function compare(\Illuminate\Database\Eloquent\Builder $builder) : void
+    protected function compare(\Illuminate\Database\Eloquent\Builder $builder): void
     {
         $reference = $this->service->serialize($builder);
         $package = $builder;
@@ -110,7 +110,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return string
      */
-    private function getScheme(\Illuminate\Database\Eloquent\Builder $builder) : string
+    private function getScheme(\Illuminate\Database\Eloquent\Builder $builder): string
     {
         \DB::flushQueryLog();
         $result = $builder->get();

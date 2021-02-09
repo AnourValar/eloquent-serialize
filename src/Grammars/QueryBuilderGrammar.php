@@ -10,7 +10,7 @@ trait QueryBuilderGrammar
      * @param \Illuminate\Database\Query\Builder $builder
      * @return array
      */
-    protected function packQueryBuilder(\Illuminate\Database\Query\Builder $builder) : array
+    protected function packQueryBuilder(\Illuminate\Database\Query\Builder $builder): array
     {
         return [
             'bindings' => $builder->bindings,
@@ -38,7 +38,7 @@ trait QueryBuilderGrammar
      * @param \Illuminate\Database\Query\Builder $builder
      * @return \Illuminate\Database\Query\Builder
      */
-    protected function unpackQueryBuilder(array $data, \Illuminate\Database\Query\Builder $builder) : \Illuminate\Database\Query\Builder
+    protected function unpackQueryBuilder(array $data, \Illuminate\Database\Query\Builder $builder): \Illuminate\Database\Query\Builder
     {
         foreach ($data as $key => $value) {
             if ($key == 'wheres') {

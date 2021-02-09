@@ -10,7 +10,7 @@ trait ModelGrammar
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return \AnourValar\EloquentSerialize\Package
      */
-    protected function pack(\Illuminate\Database\Eloquent\Builder $builder) : \AnourValar\EloquentSerialize\Package
+    protected function pack(\Illuminate\Database\Eloquent\Builder $builder): \AnourValar\EloquentSerialize\Package
     {
         return new \AnourValar\EloquentSerialize\Package([
             'model' => get_class($builder->getModel()),
@@ -25,7 +25,7 @@ trait ModelGrammar
      * @param \AnourValar\EloquentSerialize\Package $package
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function unpack(\AnourValar\EloquentSerialize\Package $package) : \Illuminate\Database\Eloquent\Builder
+    protected function unpack(\AnourValar\EloquentSerialize\Package $package): \Illuminate\Database\Eloquent\Builder
     {
         $builder = $package->get('model');
         $builder = (new $builder)->newQuery();

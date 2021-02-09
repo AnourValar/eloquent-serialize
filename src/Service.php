@@ -14,7 +14,7 @@ class Service
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return string
      */
-    public function serialize(\Illuminate\Database\Eloquent\Builder $builder) : string
+    public function serialize(\Illuminate\Database\Eloquent\Builder $builder): string
     {
         $package = $this->pack($builder);
 
@@ -28,7 +28,7 @@ class Service
      * @throws \LogicException
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function unserialize($package) : \Illuminate\Database\Eloquent\Builder
+    public function unserialize($package): \Illuminate\Database\Eloquent\Builder
     {
         // Prepare data
         if (is_string($package)) {

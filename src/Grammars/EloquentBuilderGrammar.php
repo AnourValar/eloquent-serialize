@@ -10,7 +10,7 @@ trait EloquentBuilderGrammar
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return array
      */
-    protected function packEloquentBuilder(\Illuminate\Database\Eloquent\Builder $builder) : array
+    protected function packEloquentBuilder(\Illuminate\Database\Eloquent\Builder $builder): array
     {
         return [
             'with' => $this->getEagers($builder), // preloaded ("eager") relations
@@ -26,7 +26,7 @@ trait EloquentBuilderGrammar
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return void
      */
-    protected function unpackEloquentBuilder(array $data, \Illuminate\Database\Eloquent\Builder &$builder) : void
+    protected function unpackEloquentBuilder(array $data, \Illuminate\Database\Eloquent\Builder &$builder): void
     {
         // Preloaded ("eager") relations
         $this->setEagers($builder, $data['with']);
@@ -46,7 +46,7 @@ trait EloquentBuilderGrammar
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return array
      */
-    private function getEagers(\Illuminate\Database\Eloquent\Builder $builder) : array
+    private function getEagers(\Illuminate\Database\Eloquent\Builder $builder): array
     {
         $result = [];
 
@@ -65,7 +65,7 @@ trait EloquentBuilderGrammar
      * @param array $eagers
      * @return void
      */
-    private function setEagers(\Illuminate\Database\Eloquent\Builder $builder, array $eagers) : void
+    private function setEagers(\Illuminate\Database\Eloquent\Builder $builder, array $eagers): void
     {
         foreach ($eagers as &$value) {
             $value = function ($query) use ($value)
