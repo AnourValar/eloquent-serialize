@@ -14,6 +14,7 @@ trait ModelGrammar
     {
         return new \AnourValar\EloquentSerialize\Package([
             'model' => get_class($builder->getModel()),
+            'connection' => $builder->getModel()->getConnectionName(),
             'eloquent' => $this->packEloquentBuilder($builder),
             'query' => $this->packQueryBuilder($builder->getQuery()),
         ]);
@@ -28,7 +29,7 @@ trait ModelGrammar
     protected function unpack(\AnourValar\EloquentSerialize\Package $package): \Illuminate\Database\Eloquent\Builder
     {
         $builder = $package->get('model');
-        $builder = (new $builder)->newQuery();
+        $builder = $builder::on($package->get('connection'));
 
         $this->unpackEloquentBuilder($package->get('eloquent'), $builder);
         $this->unpackQueryBuilder($package->get('query'), $builder->getQuery());
