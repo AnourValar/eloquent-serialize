@@ -18,4 +18,19 @@ class ScopeTest extends AbstractTest
         // Reverted
         $this->compare(User::withTrashed()->withoutTrashed());
     }
+
+    /**
+     * @return void
+     */
+    public function testWithParams()
+    {
+        // Primary
+        $this->compare(UserPhone::major(true));
+
+        // NOT primary
+        $this->compare(UserPhone::major(false));
+
+        // Combine
+        $this->compare(UserPhone::major(false)->search('906'));
+    }
 }
