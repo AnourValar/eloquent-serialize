@@ -13,6 +13,7 @@ $factory->define(User::class, function (Faker $faker, array $attributes)
     return [
         'title' => 'admin',
         'sort' => $faker->numberBetween(1, 10),
+        'meta' => json_encode(['foo' => 'a']),
         'deleted_at' => mt_rand(0, 5) ? null : $faker->date('Y-m-d H:i:s'),
     ];
 });

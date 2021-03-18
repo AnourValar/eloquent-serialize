@@ -136,4 +136,14 @@ class WhereTest extends AbstractTest
             })
         );
     }
+
+    /**
+     * @return void
+     */
+    public function testJson()
+    {
+        $this->compare(User::where('meta->foo', 'a'));
+
+        $this->compare(User::whereJsonContains('meta->foo', ['a']), false);
+    }
 }

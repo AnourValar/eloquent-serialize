@@ -41,6 +41,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $table->increments('id');
             $table->string('title');
             $table->integer('sort');
+            $table->jsonb('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -84,9 +85,10 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder
+     * @param boolean $execute
      * @return void
      */
-    protected function compare(\Illuminate\Database\Eloquent\Builder $builder): void
+    protected function compare(\Illuminate\Database\Eloquent\Builder $builder, bool $execute = true): void
     {
         $reference = $this->service->serialize($builder);
         $package = $builder;
@@ -98,8 +100,8 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $package = json_decode($package, true);
             $package = $this->service->unserialize($package);
 
-            $original = $this->getScheme($builder);
-            $repacked = $this->getScheme($package);
+            $original = $this->getScheme($builder, $execute);
+            $repacked = $this->getScheme($package, $execute);
 
             $this->assertTrue($original === $repacked, "#$i:\nOriginal:\n$original\n\nRepacked:\n$repacked\n\n");
             $this->assertTrue($reference === $this->service->serialize($package), "#$i");
@@ -108,12 +110,17 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param boolean $execute
      * @return string
      */
-    private function getScheme(\Illuminate\Database\Eloquent\Builder $builder): string
+    private function getScheme(\Illuminate\Database\Eloquent\Builder $builder, bool $execute): string
     {
         \DB::flushQueryLog();
-        $result = $builder->get();
+        if ($execute) {
+            $result = $builder->get();
+        } else {
+            $result = [];
+        }
         $logs = \DB::getQueryLog();
 
         foreach ($logs as &$log) {
