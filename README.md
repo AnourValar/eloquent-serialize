@@ -16,7 +16,7 @@ $package = \EloquentSerialize::serialize(
         ::with('userPhones')
         ->where('id', '>', '10')
         ->limit(20)
-));
+);
 ```
 
 
