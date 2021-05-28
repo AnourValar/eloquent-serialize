@@ -51,7 +51,10 @@ trait EloquentBuilderGrammar
         $result = [];
 
         foreach ($builder->getEagerLoads() as $name => $value) {
-            $relation = $builder->getRelation($name); // get relation without "constraints"
+            $relation = $builder;
+            foreach (explode('.', $name) as $part) {
+                $relation = $relation->getRelation($part); // get a relation without "constraints"
+            }
             $value($relation); // apply closure
 
             $result[$name] = $this->packQueryBuilder($relation->getQuery()->getQuery());

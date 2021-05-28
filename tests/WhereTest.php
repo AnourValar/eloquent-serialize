@@ -106,6 +106,39 @@ class WhereTest extends AbstractTest
     /**
      * @return void
      */
+    public function testNestedHas()
+    {
+        // has
+        $this->compare(User::has('userPhones.userPhoneNote'));
+
+        // whereHas, 1 level
+        $this->compare(
+            User::whereHas('userPhones.userPhoneNote', function ($query)
+            {
+                $query->where('created_at', '>=', '2010-01-01');
+            })
+        );
+
+        // whereHas, X levels
+        $this->compare(
+            User::where(function ($query)
+            {
+                $query->whereHas('userPhones.userPhoneNote', function ($query)
+                {
+                    $query->where(function ($query)
+                    {
+                        $query
+                            ->where('created_at', '>=', '2010-01-01')
+                            ->orWhere('id', '=', '1');
+                    });
+                });
+            })
+        );
+    }
+
+    /**
+     * @return void
+     */
     public function testDoesnthave()
     {
         // doesnthave

@@ -22,6 +22,18 @@ class EagerTest extends AbstractTest
     /**
      * @return void
      */
+    public function testNested()
+    {
+        // with
+        $this->compare(User::with('userPhones.userPhoneNote'));
+
+        // with (reverse)
+        $this->compare(UserPhone::with('user.userPhones'));
+    }
+
+    /**
+     * @return void
+     */
     public function testWithBuilder()
     {
         // 1 level
