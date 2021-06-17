@@ -22,6 +22,20 @@ class EagerTest extends AbstractTest
     /**
      * @return void
      */
+    public function testComplex()
+    {
+        // with
+        $this->compare(User::with('userPhonesSorted'));
+        $this->compare(User::with('userPhonesPrimary'));
+
+        // with count
+        $this->compare(User::withCount('userPhonesSorted'));
+        $this->compare(User::withCount('userPhonesPrimary'));
+    }
+
+    /**
+     * @return void
+     */
     public function testNested()
     {
         // with
@@ -29,6 +43,20 @@ class EagerTest extends AbstractTest
 
         // with (reverse)
         $this->compare(UserPhone::with('user.userPhones'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testNestedComplex()
+    {
+        // with
+        $this->compare(User::with('userPhonesSorted.userPhoneNote'));
+        $this->compare(User::with('userPhonesPrimary.userPhoneNote'));
+
+        // with (reverse)
+        $this->compare(UserPhone::with('user.userPhonesSorted'));
+        $this->compare(UserPhone::with('user.userPhonesPrimary'));
     }
 
     /**
@@ -75,6 +103,47 @@ class EagerTest extends AbstractTest
     /**
      * @return void
      */
+    public function testWithComplexBuilder()
+    {
+        // 1 level
+        $this->compare(
+            User::with(['userPhonesPrimary' => function ($query)
+            {
+                $query->orderBy('id', 'ASC')->limit(1)->select(['id', 'phone']);
+            }])
+        );
+
+        // 2 levels
+        $this->compare(
+            User::with(['userPhonesPrimary' => function ($query)
+            {
+                $query->where(function ($query)
+                {
+                    $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
+                });
+            }])
+        );
+
+        // 3 levels
+        $this->compare(
+            User::with(['userPhonesPrimary' => function ($query)
+            {
+                $query->where(function ($query)
+                {
+                    $query
+                        ->where('phone', '=', '111')
+                        ->orWhere(function ($query)
+                        {
+                            $query->where('phone', '=', '222')->orWhere('created_at', '>', '2010-01-01');
+                        });
+                });
+            }])
+        );
+    }
+
+    /**
+     * @return void
+     */
     public function testWithCountBuilder()
     {
         // 1 level
@@ -88,6 +157,31 @@ class EagerTest extends AbstractTest
         // 2 levels
         $this->compare(
             User::withCount(['userPhones' => function ($query)
+            {
+                $query->where(function ($query)
+                {
+                    $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
+                });
+            }])
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testWithComplexCountBuilder()
+    {
+        // 1 level
+        $this->compare(
+            User::withCount(['userPhonesSorted' => function ($query)
+            {
+                $query->limit(2);
+            }])
+        );
+
+        // 2 levels
+        $this->compare(
+            User::withCount(['userPhonesSorted' => function ($query)
             {
                 $query->where(function ($query)
                 {
@@ -157,19 +251,35 @@ class EagerTest extends AbstractTest
     public function testHasManyThrough()
     {
         // simple
-        $this->compare(
-            User::with('userPhoneNote')
-        );
+        $this->compare(User::with('userPhoneNote'));
+        $this->compare(User::with('userPhonesSorted'));
+        $this->compare(User::with('userPhonesPrimary'));
 
         // simple count
-        $this->compare(
-            User::withCount('userPhoneNote')
-        );
+        $this->compare(User::withCount('userPhoneNote'));
+        $this->compare(User::withCount('userPhonesSorted'));
+        $this->compare(User::withCount('userPhonesPrimary'));
 
         // builder
         $this->compare(
             User::with([
                 'userPhoneNote' => function ($query)
+                {
+                    $query->limit(1);
+                }
+            ])
+        );
+        $this->compare(
+            User::with([
+                'userPhonesSorted' => function ($query)
+                {
+                    $query->limit(1);
+                }
+            ])
+        );
+        $this->compare(
+            User::with([
+                'userPhonesPrimary' => function ($query)
                 {
                     $query->limit(1);
                 }

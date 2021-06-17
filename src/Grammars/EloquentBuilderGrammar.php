@@ -55,9 +55,13 @@ trait EloquentBuilderGrammar
             foreach (explode('.', $name) as $part) {
                 $relation = $relation->getRelation($part); // get a relation without "constraints"
             }
-            $value($relation); // apply closure
+            $referenceRelation = clone $relation;
 
+            $value($relation); // apply closure
             $result[$name] = $this->packQueryBuilder($relation->getQuery()->getQuery());
+
+            $relation->getQuery()->getModel()->newInstance()->with($name)->getEagerLoads()[$name]($referenceRelation);
+            $this->cleanStaticConstraints($result[$name], $this->packQueryBuilder($referenceRelation->getQuery()->getQuery()));
         }
 
         return $result;
@@ -78,13 +82,33 @@ trait EloquentBuilderGrammar
                     $query = $query->getQuery();
                 }
 
-                $query->joins = null; // "no constraints" issue
-
                 $this->unpackQueryBuilder($value, $query);
             };
         }
         unset($value);
 
         $builder->setEagerLoads($eagers);
+    }
+
+    /**
+     * @param array $packedQueryBuilder
+     * @param array $packedReferenceQueryBuilder
+     * @return void
+     */
+    private function cleanStaticConstraints(array &$packedQueryBuilder, array $packedReferenceQueryBuilder)
+    {
+        $properties = [
+            'aggregate', 'columns', 'distinct', 'wheres', 'groups', 'havings', 'orders', 'limit', 'offset', 'unions',
+            'unionLimit', 'unionOffset', 'unionOrders', 'joins',
+        ];
+
+        foreach ($properties as $property) {
+            foreach ((array) $packedQueryBuilder[$property] as $key => $item) {
+                if (in_array($item, (array) $packedReferenceQueryBuilder[$property], true)) {
+                    unset($packedQueryBuilder[$property][$key]);
+                    unset($packedQueryBuilder['bindings'][mb_substr($property, 0, -1)][$key]); // wheres -> where
+                }
+            }
+        }
     }
 }

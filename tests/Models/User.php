@@ -15,6 +15,22 @@ class User extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userPhonesSorted()
+    {
+        return $this->hasMany(UserPhone::class)->orderBy('phone', 'ASC');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userPhonesPrimary()
+    {
+        return $this->hasMany(UserPhone::class)->where('is_primary', '=', '1');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
     public function userPhoneNote()
