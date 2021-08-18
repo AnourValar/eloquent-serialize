@@ -90,21 +90,17 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
      */
     protected function compare(\Illuminate\Database\Eloquent\Builder $builder, bool $execute = true): void
     {
-        $reference = $this->service->serialize($builder);
-        $package = $builder;
+        $referenceBuilder = clone $builder;
+        $referenceSerialize = $this->service->serialize($builder);
 
         for ($i = 1; $i <= 3; $i++) {
-            $package = $this->service->serialize($package);
-            $package = json_encode($package);
+            $builder = $this->service->serialize($builder);
+            $this->assertSame($referenceSerialize, $builder, "#$i");
 
-            $package = json_decode($package, true);
-            $package = $this->service->unserialize($package);
-
-            $original = $this->getScheme($builder, $execute);
-            $repacked = $this->getScheme($package, $execute);
-
-            $this->assertTrue($original === $repacked, "#$i:\nOriginal:\n$original\n\nRepacked:\n$repacked\n\n");
-            $this->assertTrue($reference === $this->service->serialize($package), "#$i");
+            $builder = json_encode($builder);
+            $builder = json_decode($builder, true);
+            $builder = $this->service->unserialize($builder);
+            $this->assertSame($this->getScheme($referenceBuilder, $execute), $this->getScheme($builder, $execute), "#$i");
         }
     }
 
