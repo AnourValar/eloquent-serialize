@@ -95,7 +95,7 @@ trait EloquentBuilderGrammar
      * @param array $packedReferenceQueryBuilder
      * @return void
      */
-    private function cleanStaticConstraints(array &$packedQueryBuilder, array $packedReferenceQueryBuilder)
+    private function cleanStaticConstraints(array &$packedQueryBuilder, array $packedReferenceQueryBuilder): void
     {
         $properties = [
             'aggregate', 'columns', 'distinct', 'wheres', 'groups', 'havings', 'orders', 'limit', 'offset', 'unions',
