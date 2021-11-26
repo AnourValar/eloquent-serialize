@@ -2,21 +2,21 @@
 
 namespace AnourValar\EloquentSerialize\Grammars;
 
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
+
 trait ModelGrammar
 {
     /**
      * Pack
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      * @return \AnourValar\EloquentSerialize\Package
      */
-    protected function pack(\Illuminate\Database\Eloquent\Builder $builder): \AnourValar\EloquentSerialize\Package
+    protected function pack($builder): \AnourValar\EloquentSerialize\Package
     {
         return new \AnourValar\EloquentSerialize\Package([
-            'model' => get_class($builder->getModel()),
-            'connection' => $builder->getModel()->getConnectionName(),
-            'eloquent' => $this->packEloquentBuilder($builder),
-            'query' => $this->packQueryBuilder($builder->getQuery()),
+            'query' => $this->packQueryBuilder($builder),
         ]);
     }
 
@@ -26,13 +26,11 @@ trait ModelGrammar
      * @param \AnourValar\EloquentSerialize\Package $package
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function unpack(\AnourValar\EloquentSerialize\Package $package): \Illuminate\Database\Eloquent\Builder
+    protected function unpack(\AnourValar\EloquentSerialize\Package $package)
     {
-        $builder = $package->get('model');
-        $builder = $builder::on($package->get('connection'));
+        $builder = DB::connection($package->get('connection'))->table('notOfInterest');
 
-        $this->unpackEloquentBuilder($package->get('eloquent'), $builder);
-        $this->unpackQueryBuilder($package->get('query'), $builder->getQuery());
+        $this->unpackQueryBuilder($package->get('query'), $builder);
 
         return $builder;
     }

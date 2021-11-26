@@ -2,6 +2,8 @@
 
 namespace AnourValar\EloquentSerialize;
 
+use Illuminate\Database\Query\Builder;
+
 class Service
 {
     use \AnourValar\EloquentSerialize\Grammars\ModelGrammar;
@@ -11,10 +13,9 @@ class Service
     /**
      * Pack
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return string
      */
-    public function serialize(\Illuminate\Database\Eloquent\Builder $builder): string
+    public function serialize(Builder $builder): string
     {
         $package = $this->pack($builder);
 
@@ -26,9 +27,9 @@ class Service
      *
      * @param mixed $package
      * @throws \LogicException
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Query\Builder
      */
-    public function unserialize($package): \Illuminate\Database\Eloquent\Builder
+    public function unserialize($package): Builder
     {
         // Prepare data
         if (is_string($package)) {
