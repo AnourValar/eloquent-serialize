@@ -2,20 +2,20 @@
 
 namespace AnourValar\EloquentSerialize\Grammars;
 
-use Illuminate\Database\Query\Builder;
-
 trait EloquentBuilderGrammar
 {
     /**
      * Serialize state for \Illuminate\Database\Eloquent\Builder
      *
-     * @param Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return array
      */
-    protected function packEloquentBuilder(Builder $builder): array
+    protected function packEloquentBuilder(\Illuminate\Database\Eloquent\Builder $builder): array
     {
         return [
-            'removed_scopes' => $builder->removedScopes() // global scopes
+            'with' => $this->getEagers($builder), // preloaded ("eager") relations
+            'removed_scopes' => $builder->removedScopes(), // global scopes
+            'casts' => $builder->getModel()->getCasts(),
         ];
     }
 
@@ -23,10 +23,10 @@ trait EloquentBuilderGrammar
      * Unserialize state for \Illuminate\Database\Eloquent\Builder
      *
      * @param array $data
-     * @param Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return void
      */
-    protected function unpackEloquentBuilder(array $data, Builder &$builder): void
+    protected function unpackEloquentBuilder(array $data, \Illuminate\Database\Eloquent\Builder &$builder): void
     {
         // Preloaded ("eager") relations
         $this->setEagers($builder, $data['with']);
@@ -43,10 +43,10 @@ trait EloquentBuilderGrammar
     }
 
     /**
-     * @param $builder
+     * @param \Illuminate\Database\Eloquent\Builder $builder
      * @return array
      */
-    private function getEagers(Builder $builder): array
+    private function getEagers(\Illuminate\Database\Eloquent\Builder $builder): array
     {
         $result = [];
 
