@@ -91,7 +91,7 @@ trait QueryBuilderGrammar
 
         foreach ($unions as &$item) {
             if (isset($item['query'])) {
-                $item['query'] = $this->pack($item['query']);
+                $item['query'] = $this->packEloquent($item['query']);
             }
         }
         unset($item);

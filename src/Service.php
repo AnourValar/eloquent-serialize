@@ -2,7 +2,7 @@
 
 namespace AnourValar\EloquentSerialize;
 
-use Illuminate\Database\Query\Builder;
+use Nette\NotImplementedException;
 
 class Service
 {
@@ -12,12 +12,22 @@ class Service
 
     /**
      * Pack
+     * @param \Illuminate\Database\Query\Builder | \Illuminate\Database\Eloquent\Builder $builder
      *
      * @return string
      */
-    public function serialize(Builder $builder): string
+    public function serialize($builder): string
     {
-        $package = $this->pack($builder);
+        switch (true) {
+            case $builder instanceof \Illuminate\Database\Query\Builder:
+                $package = $this->packQuery($builder);
+                break;
+            case $builder instanceof \Illuminate\Database\Eloquent\Builder:
+                $package = $this->packEloquent($builder);
+                break;
+            default:
+                throw new NotImplementedException('No implementation found for build (' . get_class($builder) . ')');
+        }
 
         return serialize($package); // important!
     }
@@ -27,9 +37,9 @@ class Service
      *
      * @param mixed $package
      * @throws \LogicException
-     * @return \Illuminate\Database\Query\Builder
+     * @return \Illuminate\Database\Query\Builder | \Illuminate\Database\Eloquent\Builder
      */
-    public function unserialize($package): Builder
+    public function unserialize($package)
     {
         // Prepare data
         if (is_string($package)) {
