@@ -25,7 +25,11 @@ class WithCastsTest extends AbstractTest
      */
     public function testSimple()
     {
+        // Common
         $this->compare(User::withCasts(['user_id' => 'integer']));
+
+        // Custom
+        $this->compare(User::withCasts(['user_id' => \AnourValar\EloquentSerialize\Tests\Casts\TestCast::class]));
     }
 
     /**

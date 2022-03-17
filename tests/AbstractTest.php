@@ -85,7 +85,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param boolean $execute
+     * @param bool $execute
      * @return void
      */
     protected function compare(\Illuminate\Database\Eloquent\Builder $builder, bool $execute = true): void
@@ -106,7 +106,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param boolean $execute
+     * @param bool $execute
      * @return string
      */
     private function getScheme(\Illuminate\Database\Eloquent\Builder $builder, bool $execute): string

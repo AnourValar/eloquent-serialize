@@ -23,7 +23,7 @@ $factory->define(UserPhone::class, function (Faker $faker, array $attributes)
     $counter++;
 
     return [
-        'user_id' => function() use ($counter)
+        'user_id' => function () use ($counter)
         {
             if (! ($counter % 2)) {
                 return UserPhone::max('id');
@@ -42,7 +42,7 @@ $factory->define(UserPhoneNote::class, function (Faker $faker, array $attributes
     $counter++;
 
     return [
-        'user_phone_id' => function() use ($counter)
+        'user_phone_id' => function () use ($counter)
         {
             if (! ($counter % 2)) {
                 return UserPhone::max('id');

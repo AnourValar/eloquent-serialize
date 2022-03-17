@@ -3,6 +3,7 @@
 namespace AnourValar\EloquentSerialize\Tests;
 
 use AnourValar\EloquentSerialize\Tests\Models\User;
+use AnourValar\EloquentSerialize\Tests\Models\Post;
 
 class WhereTest extends AbstractTest
 {
@@ -177,5 +178,26 @@ class WhereTest extends AbstractTest
         $this->compare(User::where('meta->foo', 'a'));
 
         $this->compare(User::whereJsonContains('meta->foo', ['a']), false);
+    }
+
+    /**
+     * @return void
+     */
+    public function testFullText()
+    {
+        // Simple
+        $this->compare(Post::whereFullText('body', 'said'), false);
+
+        // With options
+        $this->compare(Post::whereFullText('body', 'said', ['language' => 'russian']), false);
+
+        // Inside closure
+        $this->compare(
+            User::whereHas('userPhoneNote', function ($query)
+            {
+                $query->whereFullText('note', 'another', ['language' => 'russian']);
+            }),
+            false
+        );
     }
 }

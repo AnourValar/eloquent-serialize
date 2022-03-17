@@ -22,7 +22,7 @@ class UserPhone extends \Illuminate\Database\Eloquent\Model
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param boolean $isPrimary
+     * @param bool $isPrimary
      * @return void
      */
     public function scopeMajor(\Illuminate\Database\Eloquent\Builder $query, bool $isPrimary)
