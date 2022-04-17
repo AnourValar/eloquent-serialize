@@ -12,7 +12,7 @@ $factory->define(User::class, function (Faker $faker, array $attributes)
     return [
         'title' => 'admin',
         'sort' => $faker->numberBetween(1, 10),
-        'meta' => json_encode(['foo' => 'a']),
+        'meta' => $faker->randomElement([json_encode(['foo' => 'a']), json_encode(['foo' => ['bar' => ['hello']]])]),
         'deleted_at' => mt_rand(0, 5) ? null : $faker->date('Y-m-d H:i:s'),
     ];
 });
@@ -26,7 +26,10 @@ $factory->define(UserPhone::class, function (Faker $faker, array $attributes)
         'user_id' => function () use ($counter)
         {
             if (! ($counter % 2)) {
-                return UserPhone::max('id');
+                $id = User::max('id');
+                if ($id) {
+                    return $id;
+                }
             }
 
             return factory(User::class)->create();
@@ -45,7 +48,10 @@ $factory->define(UserPhoneNote::class, function (Faker $faker, array $attributes
         'user_phone_id' => function () use ($counter)
         {
             if (! ($counter % 2)) {
-                return UserPhone::max('id');
+                $id = UserPhone::max('id');
+                if ($id) {
+                    return $id;
+                }
             }
 
             return factory(UserPhone::class)->create();

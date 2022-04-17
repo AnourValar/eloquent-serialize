@@ -78,9 +78,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
      */
     protected function setUpSeeder()
     {
-        for ($i = 0; $i < 80; $i++) {
-            factory(UserPhoneNote::class)->create();
-        }
+        factory(UserPhoneNote::class)->times(80)->create();
     }
 
     /**

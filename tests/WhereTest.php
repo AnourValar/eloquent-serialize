@@ -2,8 +2,9 @@
 
 namespace AnourValar\EloquentSerialize\Tests;
 
-use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\Post;
+use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
+use AnourValar\EloquentSerialize\Tests\Models\User;
 
 class WhereTest extends AbstractTest
 {
@@ -178,6 +179,21 @@ class WhereTest extends AbstractTest
         $this->compare(User::where('meta->foo', 'a'));
 
         $this->compare(User::whereJsonContains('meta->foo', ['a']), false);
+
+        $this->compare(User::whereJsonDoesntContain('meta->foo', ['a']), false);
+
+        $this->compare(User::whereJsonLength('meta->foo', 0));
+        $this->compare(User::whereJsonLength('meta->foo', '>', 1));
+
+        $this->compare(User::whereJsonContainsKey('meta->foo'));
+        $this->compare(User::whereJsonContainsKey('meta->foo[0]'));
+        $this->compare(User::whereJsonContainsKey('meta->foo->bar'));
+        $this->compare(User::whereJsonContainsKey('meta->foo->bar[0]'));
+
+        $this->compare(User::whereJsonDoesntContainKey('meta->foo'));
+        $this->compare(User::whereJsonDoesntContainKey('meta->foo[0]'));
+        $this->compare(User::whereJsonDoesntContainKey('meta->foo->bar'));
+        $this->compare(User::whereJsonDoesntContainKey('meta->foo->bar[0]'));
     }
 
     /**
@@ -199,5 +215,15 @@ class WhereTest extends AbstractTest
             }),
             false
         );
+    }
+
+    /**
+     * @return void
+     */
+    public function testBelongsTo()
+    {
+        $this->compare(
+            UserPhone
+            ::whereBelongsTo(UserPhone::has('user')->first()->user));
     }
 }
