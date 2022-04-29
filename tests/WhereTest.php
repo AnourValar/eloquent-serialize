@@ -79,12 +79,20 @@ class WhereTest extends AbstractTest
     {
         // has
         $this->compare(User::has('userPhones'));
+        $this->compare(User::has('filesAB')->has('filesC'));
 
         // whereHas, 1 level
         $this->compare(
             User::whereHas('userPhones', function ($query)
             {
                 $query->where('created_at', '>=', '2010-01-01');
+            })
+        );
+
+        $this->compare(
+            User::whereHas('filesAB', function ($query)
+            {
+                $query->whereIn('type', ['f', 'g']);
             })
         );
 
@@ -145,6 +153,7 @@ class WhereTest extends AbstractTest
     {
         // doesnthave
         $this->compare(User::doesnthave('userPhones'));
+        $this->compare(User::doesnthave('filesAB')->doesnthave('filesC'));
 
         // whereDoesnthave
         $this->compare(

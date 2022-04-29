@@ -12,6 +12,9 @@ class EagerTest extends AbstractTest
      */
     public function testSimple()
     {
+        // ...
+        $this->compare(User::query());
+
         // with
         $this->compare(User::with('userPhones'));
 
@@ -27,10 +30,14 @@ class EagerTest extends AbstractTest
         // with
         $this->compare(User::with('userPhonesSorted'));
         $this->compare(User::with('userPhonesPrimary'));
+        $this->compare(User::with(['userPhonesSorted', 'userPhonesPrimary']));
+        $this->compare(User::query()->with('filesAB', 'filesC', 'filesDE'));
 
         // with count
         $this->compare(User::withCount('userPhonesSorted'));
         $this->compare(User::withCount('userPhonesPrimary'));
+        $this->compare(User::withCount(['userPhonesSorted', 'userPhonesPrimary']));
+        $this->compare(User::query()->withCount('filesAB', 'filesC', 'filesDE'));
     }
 
     /**

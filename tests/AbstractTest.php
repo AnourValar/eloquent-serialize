@@ -3,6 +3,8 @@
 namespace AnourValar\EloquentSerialize\Tests;
 
 use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
+use AnourValar\EloquentSerialize\Tests\Models\File;
+use AnourValar\EloquentSerialize\Tests\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 
 abstract class AbstractTest extends \Orchestra\Testbench\TestCase
@@ -71,6 +73,14 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $table->text('body');
             $table->timestamps();
         });
+
+        $app['db']->connection()->getSchemaBuilder()->create('files', function (Blueprint $table)
+        {
+            $table->id();
+            $table->foreignIdFor(User::class);
+            $table->string('type');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -79,6 +89,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
     protected function setUpSeeder()
     {
         factory(UserPhoneNote::class)->times(80)->create();
+        factory(File::class)->times(40)->create();
     }
 
     /**

@@ -27,7 +27,7 @@ class User extends \Illuminate\Database\Eloquent\Model
      */
     public function userPhonesPrimary()
     {
-        return $this->hasMany(UserPhone::class)->where('is_primary', '=', '1');
+        return $this->hasMany(UserPhone::class)->where('is_primary', '=', true);
     }
 
     /**
@@ -36,5 +36,32 @@ class User extends \Illuminate\Database\Eloquent\Model
     public function userPhoneNote()
     {
         return $this->hasManyThrough(UserPhoneNote::class, UserPhone::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function filesAB()
+    {
+        return $this->hasMany(File::class, 'user_id')->whereIn('type', ['a', 'b']);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function filesC()
+    {
+        return $this->hasMany(File::class, 'user_id', 'id')->where('type', 'c');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function filesDE()
+    {
+        return $this->hasOne(File::class)
+            ->whereNotIn('type', ['f', 'g'])
+            ->whereIn('type', ['d', 'e'])
+            ->whereNotIn('type', ['a', 'b', 'c']);
     }
 }

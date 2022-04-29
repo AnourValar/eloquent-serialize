@@ -106,7 +106,17 @@ trait EloquentBuilderGrammar
             foreach ((array) $packedQueryBuilder[$property] as $key => $item) {
                 if (in_array($item, (array) $packedReferenceQueryBuilder[$property], true)) {
                     unset($packedQueryBuilder[$property][$key]);
-                    unset($packedQueryBuilder['bindings'][mb_substr($property, 0, -1)][$key]); // wheres -> where
+                }
+            }
+        }
+
+        foreach ($packedQueryBuilder['bindings'] as $binding => $data) {
+            foreach ($data as $key => $value) {
+                if (
+                    isset($packedReferenceQueryBuilder['bindings'][$binding][$key])
+                    && $packedReferenceQueryBuilder['bindings'][$binding][$key] === $value
+                ) {
+                    unset($packedQueryBuilder['bindings'][$binding][$key]);
                 }
             }
         }

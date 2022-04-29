@@ -5,6 +5,7 @@
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
+use AnourValar\EloquentSerialize\Tests\Models\File;
 use Faker\Generator as Faker;
 
 $factory->define(User::class, function (Faker $faker, array $attributes)
@@ -57,5 +58,21 @@ $factory->define(UserPhoneNote::class, function (Faker $faker, array $attributes
             return factory(UserPhone::class)->create();
         },
         'note' => $faker->realText(100),
+    ];
+});
+
+$factory->define(File::class, function (Faker $faker, array $attributes)
+{
+    static $users;
+    if (! $users) {
+        $users = User::get(['id']);
+    }
+
+    return [
+        'user_id' => function () use ($users)
+        {
+            return $users->shuffle()->first();
+        },
+        'type' => $faker->randomElement(['a', 'b', 'c', 'd', 'e', 'f']),
     ];
 });
