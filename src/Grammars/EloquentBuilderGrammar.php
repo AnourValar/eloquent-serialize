@@ -103,7 +103,11 @@ trait EloquentBuilderGrammar
         ];
 
         foreach ($properties as $property) {
-            foreach ((array) $packedQueryBuilder[$property] as $key => $item) {
+            if (! is_array($packedQueryBuilder[$property])) {
+                continue;
+            }
+
+            foreach ($packedQueryBuilder[$property] as $key => $item) {
                 if (in_array($item, (array) $packedReferenceQueryBuilder[$property], true)) {
                     unset($packedQueryBuilder[$property][$key]);
                 }
@@ -111,6 +115,10 @@ trait EloquentBuilderGrammar
         }
 
         foreach ($packedQueryBuilder['bindings'] as $binding => $data) {
+            if (! is_array($data)) {
+                continue; // just in case ;)
+            }
+
             foreach ($data as $key => $value) {
                 if (
                     isset($packedReferenceQueryBuilder['bindings'][$binding][$key])
