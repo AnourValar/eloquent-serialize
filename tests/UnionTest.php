@@ -44,12 +44,9 @@ class UnionTest extends AbstractTest
      */
     public function testExpression()
     {
-        $union1 = User::where(function ($query)
-        {
-            $query->whereDoesnthave('userPhones', function ($query)
-            {
-                $query->where(function ($query)
-                {
+        $union1 = User::where(function ($query) {
+            $query->whereDoesnthave('userPhones', function ($query) {
+                $query->where(function ($query) {
                     $query
                         ->where('created_at', '>=', '2010-01-01')
                         ->orWhere('id', '=', '1');
@@ -57,21 +54,17 @@ class UnionTest extends AbstractTest
             });
         });
 
-        $union2 = User::whereHas('userPhones', function ($query)
-        {
+        $union2 = User::whereHas('userPhones', function ($query) {
             $query->where('created_at', '>=', '2010-01-01');
         });
 
-        $union2 = User::union($union2)->where(function ($query)
-        {
+        $union2 = User::union($union2)->where(function ($query) {
             $query
                 ->where('id', '=', '1')
-                ->orWhere(function ($query)
-                {
+                ->orWhere(function ($query) {
                     $query
                         ->where('id', '=', '2')
-                        ->orWhere(function ($query)
-                        {
+                        ->orWhere(function ($query) {
                             $query
                                 ->where('title', '!=', 'admin')
                                 ->orWhere('id', '=', '3');

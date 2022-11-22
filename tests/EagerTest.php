@@ -73,18 +73,15 @@ class EagerTest extends AbstractTest
     {
         // 1 level
         $this->compare(
-            User::with(['userPhones' => function ($query)
-            {
+            User::with(['userPhones' => function ($query) {
                 $query->orderBy('id', 'ASC')->limit(1)->select(['id', 'phone']);
             }])
         );
 
         // 2 levels
         $this->compare(
-            User::with(['userPhones' => function ($query)
-            {
-                $query->where(function ($query)
-                {
+            User::with(['userPhones' => function ($query) {
+                $query->where(function ($query) {
                     $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
                 });
             }])
@@ -92,14 +89,11 @@ class EagerTest extends AbstractTest
 
         // 3 levels
         $this->compare(
-            User::with(['userPhones' => function ($query)
-            {
-                $query->where(function ($query)
-                {
+            User::with(['userPhones' => function ($query) {
+                $query->where(function ($query) {
                     $query
                         ->where('phone', '=', '111')
-                        ->orWhere(function ($query)
-                        {
+                        ->orWhere(function ($query) {
                             $query->where('phone', '=', '222')->orWhere('created_at', '>', '2010-01-01');
                         });
                 });
@@ -114,18 +108,15 @@ class EagerTest extends AbstractTest
     {
         // 1 level
         $this->compare(
-            User::with(['userPhonesPrimary' => function ($query)
-            {
+            User::with(['userPhonesPrimary' => function ($query) {
                 $query->orderBy('id', 'ASC')->limit(1)->select(['id', 'phone']);
             }])
         );
 
         // 2 levels
         $this->compare(
-            User::with(['userPhonesPrimary' => function ($query)
-            {
-                $query->where(function ($query)
-                {
+            User::with(['userPhonesPrimary' => function ($query) {
+                $query->where(function ($query) {
                     $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
                 });
             }])
@@ -133,14 +124,11 @@ class EagerTest extends AbstractTest
 
         // 3 levels
         $this->compare(
-            User::with(['userPhonesPrimary' => function ($query)
-            {
-                $query->where(function ($query)
-                {
+            User::with(['userPhonesPrimary' => function ($query) {
+                $query->where(function ($query) {
                     $query
                         ->where('phone', '=', '111')
-                        ->orWhere(function ($query)
-                        {
+                        ->orWhere(function ($query) {
                             $query->where('phone', '=', '222')->orWhere('created_at', '>', '2010-01-01');
                         });
                 });
@@ -155,18 +143,15 @@ class EagerTest extends AbstractTest
     {
         // 1 level
         $this->compare(
-            User::withCount(['userPhones' => function ($query)
-            {
+            User::withCount(['userPhones' => function ($query) {
                 $query->limit(2);
             }])
         );
 
         // 2 levels
         $this->compare(
-            User::withCount(['userPhones' => function ($query)
-            {
-                $query->where(function ($query)
-                {
+            User::withCount(['userPhones' => function ($query) {
+                $query->where(function ($query) {
                     $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
                 });
             }])
@@ -180,18 +165,15 @@ class EagerTest extends AbstractTest
     {
         // 1 level
         $this->compare(
-            User::withCount(['userPhonesSorted' => function ($query)
-            {
+            User::withCount(['userPhonesSorted' => function ($query) {
                 $query->limit(2);
             }])
         );
 
         // 2 levels
         $this->compare(
-            User::withCount(['userPhonesSorted' => function ($query)
-            {
-                $query->where(function ($query)
-                {
+            User::withCount(['userPhonesSorted' => function ($query) {
+                $query->where(function ($query) {
                     $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
                 });
             }])
@@ -211,17 +193,14 @@ class EagerTest extends AbstractTest
         // builder
         $this->compare(
             User::withCount([
-                'userPhones as primary' => function ($query)
-                {
-                    $query->where(function ($query)
-                    {
+                'userPhones as primary' => function ($query) {
+                    $query->where(function ($query) {
                         $query->where('is_primary', true);
                     });
                 },
-                'userPhones as not_primary' => function ($query)
-                {
+                'userPhones as not_primary' => function ($query) {
                     $query->where('is_primary', false);
-                }
+                },
             ])
         );
     }
@@ -244,10 +223,9 @@ class EagerTest extends AbstractTest
         // builder
         $this->compare(
             UserPhone::with([
-                'user' => function ($query)
-                {
+                'user' => function ($query) {
                     $query->where('title', '=', 'admin')->limit(1);
-                }
+                },
             ])
         );
     }
@@ -270,26 +248,23 @@ class EagerTest extends AbstractTest
         // builder
         $this->compare(
             User::with([
-                'userPhoneNote' => function ($query)
-                {
+                'userPhoneNote' => function ($query) {
                     $query->limit(1);
-                }
+                },
             ])
         );
         $this->compare(
             User::with([
-                'userPhonesSorted' => function ($query)
-                {
+                'userPhonesSorted' => function ($query) {
                     $query->limit(1);
-                }
+                },
             ])
         );
         $this->compare(
             User::with([
-                'userPhonesPrimary' => function ($query)
-                {
+                'userPhonesPrimary' => function ($query) {
                     $query->limit(1);
-                }
+                },
             ])
         );
     }
@@ -312,10 +287,9 @@ class EagerTest extends AbstractTest
         // builder
         $this->compare(
             UserPhone::with([
-                'userPhoneNote' => function ($query)
-                {
+                'userPhoneNote' => function ($query) {
                     $query->whereNotNull('note');
-                }
+                },
             ])
         );
     }

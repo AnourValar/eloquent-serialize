@@ -75,8 +75,7 @@ trait EloquentBuilderGrammar
     private function setEagers(\Illuminate\Database\Eloquent\Builder $builder, array $eagers): void
     {
         foreach ($eagers as &$value) {
-            $value = function ($query) use ($value)
-            {
+            $value = function ($query) use ($value) {
                 // Input argument may be different depends on context
                 while (! ($query instanceof \Illuminate\Database\Query\Builder)) {
                     $query = $query->getQuery();

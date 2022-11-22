@@ -3,8 +3,8 @@
 namespace AnourValar\EloquentSerialize\Tests;
 
 use AnourValar\EloquentSerialize\Tests\Models\Post;
-use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 use AnourValar\EloquentSerialize\Tests\Models\User;
+use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 
 class WhereTest extends AbstractTest
 {
@@ -32,20 +32,17 @@ class WhereTest extends AbstractTest
 
         // 1 level
         $this->compare(
-            User::where(function ($query)
-            {
+            User::where(function ($query) {
                 $query->where('id', '=', '1')->orWhere('id', '=', 2);
             })
         );
 
         // 2 levels
         $this->compare(
-            User::where(function ($query)
-            {
+            User::where(function ($query) {
                 $query
                     ->where('id', '=', '1')
-                    ->orWhere(function ($query)
-                    {
+                    ->orWhere(function ($query) {
                         $query->where('id', '=', '2')->where('title', '!=', 'admin');
                     });
             })
@@ -53,16 +50,13 @@ class WhereTest extends AbstractTest
 
         // 3 levels
         $this->compare(
-            User::where(function ($query)
-            {
+            User::where(function ($query) {
                 $query
                     ->where('id', '=', '1')
-                    ->orWhere(function ($query)
-                    {
+                    ->orWhere(function ($query) {
                         $query
                             ->where('id', '=', '2')
-                            ->orWhere(function ($query)
-                            {
+                            ->orWhere(function ($query) {
                                 $query
                                     ->where('title', '!=', 'admin')
                                     ->orWhere('id', '=', '3');
@@ -83,27 +77,54 @@ class WhereTest extends AbstractTest
 
         // whereHas, 1 level
         $this->compare(
-            User::whereHas('userPhones', function ($query)
-            {
+            User::whereHas('userPhones', function ($query) {
                 $query->where('created_at', '>=', '2010-01-01');
             })
         );
 
         $this->compare(
-            User::whereHas('filesAB', function ($query)
-            {
+            User::whereHas('filesAB', function ($query) {
                 $query->whereIn('type', ['f', 'g']);
             })
         );
 
         // whereHas, X levels
         $this->compare(
-            User::where(function ($query)
-            {
-                $query->whereHas('userPhones', function ($query)
-                {
-                    $query->where(function ($query)
-                    {
+            User::where(function ($query) {
+                $query->whereHas('userPhones', function ($query) {
+                    $query->where(function ($query) {
+                        $query
+                            ->where('created_at', '>=', '2010-01-01')
+                            ->orWhere('id', '=', '1');
+                    });
+                });
+            })
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testWithHas()
+    {
+        // withWhereHas, 1 level
+        $this->compare(
+            User::withWhereHas('userPhones', function ($query) {
+                $query->where('created_at', '>=', '2010-01-01');
+            })
+        );
+
+        $this->compare(
+            User::withWhereHas('filesAB', function ($query) {
+                $query->whereIn('type', ['f', 'g']);
+            })
+        );
+
+        // withWhereHas, X levels
+        $this->compare(
+            User::where(function ($query) {
+                $query->withWhereHas('userPhones', function ($query) {
+                    $query->where(function ($query) {
                         $query
                             ->where('created_at', '>=', '2010-01-01')
                             ->orWhere('id', '=', '1');
@@ -123,20 +144,42 @@ class WhereTest extends AbstractTest
 
         // whereHas, 1 level
         $this->compare(
-            User::whereHas('userPhones.userPhoneNote', function ($query)
-            {
+            User::whereHas('userPhones.userPhoneNote', function ($query) {
                 $query->where('created_at', '>=', '2010-01-01');
             })
         );
 
         // whereHas, X levels
         $this->compare(
-            User::where(function ($query)
-            {
-                $query->whereHas('userPhones.userPhoneNote', function ($query)
-                {
-                    $query->where(function ($query)
-                    {
+            User::where(function ($query) {
+                $query->whereHas('userPhones.userPhoneNote', function ($query) {
+                    $query->where(function ($query) {
+                        $query
+                            ->where('created_at', '>=', '2010-01-01')
+                            ->orWhere('id', '=', '1');
+                    });
+                });
+            })
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testNestedWithHas()
+    {
+        // withWhereHas, 1 level
+        $this->compare(
+            User::withWhereHas('userPhones.userPhoneNote', function ($query) {
+                $query->where('created_at', '>=', '2010-01-01');
+            })
+        );
+
+        // withWhereHas, X levels
+        $this->compare(
+            User::where(function ($query) {
+                $query->withWhereHas('userPhones.userPhoneNote', function ($query) {
+                    $query->where(function ($query) {
                         $query
                             ->where('created_at', '>=', '2010-01-01')
                             ->orWhere('id', '=', '1');
@@ -157,20 +200,16 @@ class WhereTest extends AbstractTest
 
         // whereDoesnthave
         $this->compare(
-            User::whereDoesnthave('userPhones', function ($query)
-            {
+            User::whereDoesnthave('userPhones', function ($query) {
                 $query->where('created_at', '>=', '2010-01-01');
             })
         );
 
         // whereDoesnthave, X levels
         $this->compare(
-            User::where(function ($query)
-            {
-                $query->whereDoesnthave('userPhones', function ($query)
-                {
-                    $query->where(function ($query)
-                    {
+            User::where(function ($query) {
+                $query->whereDoesnthave('userPhones', function ($query) {
+                    $query->where(function ($query) {
                         $query
                             ->where('created_at', '>=', '2010-01-01')
                             ->orWhere('id', '=', '1');
@@ -218,8 +257,7 @@ class WhereTest extends AbstractTest
 
         // Inside closure
         $this->compare(
-            User::whereHas('userPhoneNote', function ($query)
-            {
+            User::whereHas('userPhoneNote', function ($query) {
                 $query->whereFullText('note', 'another', ['language' => 'russian']);
             }),
             false

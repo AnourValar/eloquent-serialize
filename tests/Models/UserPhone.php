@@ -37,8 +37,7 @@ class UserPhone extends \Illuminate\Database\Eloquent\Model
      */
     public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string $pattern)
     {
-        $query->where(function ($query) use ($pattern)
-        {
+        $query->where(function ($query) use ($pattern) {
             $query->where('phone', 'LIKE', "%$pattern%");
         });
     }

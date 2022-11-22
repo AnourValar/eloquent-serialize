@@ -12,8 +12,7 @@ class FromTest extends AbstractTest
     public function testSimple()
     {
         $this->compare(
-            User::whereExists(function ($query)
-            {
+            User::whereExists(function ($query) {
                 $query
                     ->from('user_phones')
                     ->whereRaw('user_phones.user_id = users.id');

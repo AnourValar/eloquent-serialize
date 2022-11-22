@@ -35,14 +35,14 @@ class WithCastsTest extends AbstractTest
     /**
      * @return void
      */
-    function testSelectRaw()
+    public function testSelectRaw()
     {
         $this->compare(
             User::select([
                 'users.*',
-                'last_phone_created_at' => UserPhone::selectRaw('MAX(created_at)')->whereColumn('user_id', 'users.id')
+                'last_phone_created_at' => UserPhone::selectRaw('MAX(created_at)')->whereColumn('user_id', 'users.id'),
             ])->withCasts([
-                'last_phone_created_at' => 'datetime'
+                'last_phone_created_at' => 'datetime',
             ])
         );
     }

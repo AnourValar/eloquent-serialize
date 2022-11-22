@@ -2,14 +2,13 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use AnourValar\EloquentSerialize\Tests\Models\File;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
-use AnourValar\EloquentSerialize\Tests\Models\File;
 use Faker\Generator as Faker;
 
-$factory->define(User::class, function (Faker $faker, array $attributes)
-{
+$factory->define(User::class, function (Faker $faker, array $attributes) {
     return [
         'title' => 'admin',
         'sort' => $faker->numberBetween(1, 10),
@@ -18,14 +17,12 @@ $factory->define(User::class, function (Faker $faker, array $attributes)
     ];
 });
 
-$factory->define(UserPhone::class, function (Faker $faker, array $attributes)
-{
+$factory->define(UserPhone::class, function (Faker $faker, array $attributes) {
     static $counter;
     $counter++;
 
     return [
-        'user_id' => function () use ($counter)
-        {
+        'user_id' => function () use ($counter) {
             if (! ($counter % 2)) {
                 $id = User::max('id');
                 if ($id) {
@@ -40,14 +37,12 @@ $factory->define(UserPhone::class, function (Faker $faker, array $attributes)
     ];
 });
 
-$factory->define(UserPhoneNote::class, function (Faker $faker, array $attributes)
-{
+$factory->define(UserPhoneNote::class, function (Faker $faker, array $attributes) {
     static $counter;
     $counter++;
 
     return [
-        'user_phone_id' => function () use ($counter)
-        {
+        'user_phone_id' => function () use ($counter) {
             if (! ($counter % 2)) {
                 $id = UserPhone::max('id');
                 if ($id) {
@@ -61,16 +56,14 @@ $factory->define(UserPhoneNote::class, function (Faker $faker, array $attributes
     ];
 });
 
-$factory->define(File::class, function (Faker $faker, array $attributes)
-{
+$factory->define(File::class, function (Faker $faker, array $attributes) {
     static $users;
     if (! $users) {
         $users = User::get(['id']);
     }
 
     return [
-        'user_id' => function () use ($users)
-        {
+        'user_id' => function () use ($users) {
             return $users->shuffle()->first();
         },
         'type' => $faker->randomElement(['a', 'b', 'c', 'd', 'e', 'f']),

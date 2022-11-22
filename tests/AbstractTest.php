@@ -2,9 +2,9 @@
 
 namespace AnourValar\EloquentSerialize\Tests;
 
-use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
 use AnourValar\EloquentSerialize\Tests\Models\File;
 use AnourValar\EloquentSerialize\Tests\Models\User;
+use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
 use Illuminate\Database\Schema\Blueprint;
 
 abstract class AbstractTest extends \Orchestra\Testbench\TestCase
@@ -38,8 +38,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
      */
     protected function setUpDatabase(\Illuminate\Foundation\Application $app)
     {
-        $app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table)
-        {
+        $app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->integer('sort');
@@ -48,8 +47,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $table->softDeletes();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create('user_phones', function (Blueprint $table)
-        {
+        $app['db']->connection()->getSchemaBuilder()->create('user_phones', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
             $table->string('phone');
@@ -57,16 +55,14 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $table->timestamps();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create('user_phone_notes', function (Blueprint $table)
-        {
+        $app['db']->connection()->getSchemaBuilder()->create('user_phone_notes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_phone_id');
             $table->string('note');
             $table->timestamps();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create('posts', function (Blueprint $table)
-        {
+        $app['db']->connection()->getSchemaBuilder()->create('posts', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
             $table->string('title');
@@ -74,8 +70,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
             $table->timestamps();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create('files', function (Blueprint $table)
-        {
+        $app['db']->connection()->getSchemaBuilder()->create('files', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class);
             $table->string('type');

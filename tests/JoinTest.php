@@ -2,9 +2,9 @@
 
 namespace AnourValar\EloquentSerialize\Tests;
 
+use AnourValar\EloquentSerialize\Tests\Models\Post;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
-use AnourValar\EloquentSerialize\Tests\Models\Post;
 
 class JoinTest extends AbstractTest
 {
@@ -59,16 +59,14 @@ class JoinTest extends AbstractTest
     {
         $this->compare(
             User
-                ::join('posts', function ($join)
-                {
+                ::join('posts', function ($join) {
                     $join->on('users.id', '=', 'posts.user_id')->orOn('users.id', '=', 'posts.user_id');
                 })
         );
 
         $this->compare(
             User
-                ::join('posts', function ($join)
-                {
+                ::join('posts', function ($join) {
                     $join->on('users.id', '=', 'posts.user_id')->where('posts.title', '=', 'abc');
                 })
         );
@@ -87,8 +85,7 @@ class JoinTest extends AbstractTest
 
         $this->compare(
             User
-                ::joinSub($latestPosts, 'latest_posts', function ($join)
-                {
+                ::joinSub($latestPosts, 'latest_posts', function ($join) {
                     $join->on('users.id', '=', 'latest_posts.user_id');
                 })
         );
