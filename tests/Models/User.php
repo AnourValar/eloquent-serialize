@@ -39,6 +39,15 @@ class User extends \Illuminate\Database\Eloquent\Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
+     */
+    public function userPhoneNoteAlt()
+    {
+        return $this->through($this->userPhones())
+            ->has(fn (UserPhone $userPhone) => $userPhone->userPhoneNote());
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function filesAB()

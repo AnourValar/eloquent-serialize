@@ -115,6 +115,10 @@ class WhereTest extends AbstractTest
         );
 
         $this->compare(
+            User::withWhereHas('userPhones:id,is_primary')
+        );
+
+        $this->compare(
             User::withWhereHas('filesAB', function ($query) {
                 $query->whereIn('type', ['f', 'g']);
             })

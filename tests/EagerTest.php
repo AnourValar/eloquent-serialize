@@ -272,6 +272,27 @@ class EagerTest extends AbstractTest
     /**
      * @return void
      */
+    public function testThroughBuilder()
+    {
+        // simple
+        $this->compare(User::with('userPhoneNoteAlt'));
+
+        // simple count
+        $this->compare(User::withCount('userPhoneNoteAlt'));
+
+        // builder
+        $this->compare(
+            User::with([
+                'userPhoneNoteAlt' => function ($query) {
+                    $query->limit(1);
+                },
+            ])
+        );
+    }
+
+    /**
+     * @return void
+     */
     public function testHasOne()
     {
         // simple
