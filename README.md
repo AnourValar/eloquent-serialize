@@ -1,4 +1,5 @@
 # Serialization for Eloquent's QueryBuilder
+Supports Laravel 6+
 
 ## Installation
 
@@ -12,8 +13,8 @@ composer require anourvalar/eloquent-serialize
 ### Serialize
 ```php
 $package = \EloquentSerialize::serialize(
-    \App\User
-        ::with('userPhones')
+    \App\User::query()
+        ->with('userPhones')
         ->where('id', '>', '10')
         ->limit(20)
 );

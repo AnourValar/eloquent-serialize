@@ -27,7 +27,12 @@ class WhereTest extends AbstractTest
     {
         // Raw
         $this->compare(
-            User::whereRaw('(id = 5 or (SELECT COUNT(*) FROM user_phones WHERE user_id = users.id) > 1)')
+            User::whereRaw('(id = ? or (SELECT COUNT(*) FROM user_phones WHERE user_id = users.id) > ?)', [5, 1])
+        );
+
+        // DB Raw
+        $this->compare(
+            User::where(\DB::raw('(id = ? or (SELECT COUNT(*) FROM user_phones WHERE user_id = users.id) > ?)', [5, 1]))
         );
 
         // 1 level
