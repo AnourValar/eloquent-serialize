@@ -11,7 +11,7 @@ class ConnectionTest extends AbstractTest
      */
     public function testDefault()
     {
-        $package = $this->service->serialize( User::where('id', '!=', 1) );
+        $package = $this->service->serialize(User::where('id', '!=', 1));
         $package = json_encode($package);
 
         $package = json_decode($package, true);
@@ -28,7 +28,7 @@ class ConnectionTest extends AbstractTest
     {
         config(['database.connections.foo' => config('database.connections.testing')]);
 
-        $package = $this->service->serialize( (new User)->setConnection('foo')->where('id', '!=', 1) );
+        $package = $this->service->serialize((new User())->setConnection('foo')->where('id', '!=', 1));
         $package = json_encode($package);
 
         $package = json_decode($package, true);

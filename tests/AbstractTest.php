@@ -88,7 +88,7 @@ abstract class AbstractTest extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param bool $execute
      * @return void
      */

@@ -46,8 +46,7 @@ class JoinTest extends AbstractTest
     public function testMultiple()
     {
         $this->compare(
-            UserPhone
-                ::join('users', 'users.id', '=', 'user_phones.user_id')
+            UserPhone::join('users', 'users.id', '=', 'user_phones.user_id')
                 ->join('posts', 'users.id', '=', 'posts.user_id')
         );
     }
@@ -58,17 +57,15 @@ class JoinTest extends AbstractTest
     public function testExpression()
     {
         $this->compare(
-            User
-                ::join('posts', function ($join) {
-                    $join->on('users.id', '=', 'posts.user_id')->orOn('users.id', '=', 'posts.user_id');
-                })
+            User::join('posts', function ($join) {
+                $join->on('users.id', '=', 'posts.user_id')->orOn('users.id', '=', 'posts.user_id');
+            })
         );
 
         $this->compare(
-            User
-                ::join('posts', function ($join) {
-                    $join->on('users.id', '=', 'posts.user_id')->where('posts.title', '=', 'abc');
-                })
+            User::join('posts', function ($join) {
+                $join->on('users.id', '=', 'posts.user_id')->where('posts.title', '=', 'abc');
+            })
         );
     }
 
@@ -77,17 +74,15 @@ class JoinTest extends AbstractTest
      */
     public function testSubQuery()
     {
-        $latestPosts = Post
-           ::select('user_id', \DB::raw('MAX(created_at) as last_post_created_at'))
+        $latestPosts = Post::select('user_id', \DB::raw('MAX(created_at) as last_post_created_at'))
            ->groupBy('user_id');
 
         $this->compare($latestPosts);
 
         $this->compare(
-            User
-                ::joinSub($latestPosts, 'latest_posts', function ($join) {
-                    $join->on('users.id', '=', 'latest_posts.user_id');
-                })
+            User::joinSub($latestPosts, 'latest_posts', function ($join) {
+                $join->on('users.id', '=', 'latest_posts.user_id');
+            })
         );
     }
 }

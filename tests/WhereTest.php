@@ -279,7 +279,7 @@ class WhereTest extends AbstractTest
     public function testBelongsTo()
     {
         $this->compare(
-            UserPhone
-            ::whereBelongsTo(UserPhone::has('user')->first()->user));
+            UserPhone::whereBelongsTo(UserPhone::has('user')->first()->user)
+        );
     }
 }
