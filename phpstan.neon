@@ -14,9 +14,7 @@ parameters:
         - '#Illuminate\\Database\\Eloquent\\Relations\\HasOneThrough but returns Illuminate\\Database\\Eloquent\\Relations\\HasManyThrough\.#'
         - '#Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\PendingHasThroughRelationship\:\:has\(\)#'
 
-
     excludePaths:
-
 
     checkFunctionNameCase: true
     checkInternalClassCaseSensitivity: true
