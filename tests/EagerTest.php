@@ -5,7 +5,7 @@ namespace AnourValar\EloquentSerialize\Tests;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 
-class EagerTest extends AbstractTest
+class EagerTest extends AbstractSuite
 {
     /**
      * @return void
@@ -82,7 +82,7 @@ class EagerTest extends AbstractTest
         $this->compare(
             User::with(['userPhones' => function ($query) {
                 $query->where(function ($query) {
-                    $query->where('phone', '=', '111')->orWhere('phone', '!=', '222');
+                    $query->where('phone', '=', '111')->orWhere('phone', '!=', '222')->limit(5);
                 });
             }])
         );

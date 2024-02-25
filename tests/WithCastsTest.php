@@ -5,7 +5,7 @@ namespace AnourValar\EloquentSerialize\Tests;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 
-class WithCastsTest extends AbstractTest
+class WithCastsTest extends AbstractSuite
 {
     /**
      * {@inheritDoc}

@@ -98,16 +98,16 @@ trait EloquentBuilderGrammar
     {
         $properties = [
             'aggregate', 'columns', 'distinct', 'wheres', 'groups', 'havings', 'orders', 'limit', 'offset', 'unions',
-            'unionLimit', 'unionOffset', 'unionOrders', 'joins',
+            'unionLimit', 'unionOffset', 'unionOrders', 'joins', 'groupLimit',
         ];
 
         foreach ($properties as $property) {
-            if (! is_array($packedQueryBuilder[$property])) {
+            if (! is_array($packedQueryBuilder[$property] ?? null)) {
                 continue;
             }
 
             foreach ($packedQueryBuilder[$property] as $key => $item) {
-                if (in_array($item, (array) $packedReferenceQueryBuilder[$property], true)) {
+                if (in_array($item, (array) ($packedReferenceQueryBuilder[$property] ?? null), true)) {
                     unset($packedQueryBuilder[$property][$key]);
                 }
             }

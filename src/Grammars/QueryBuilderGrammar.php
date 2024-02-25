@@ -12,7 +12,7 @@ trait QueryBuilderGrammar
      */
     protected function packQueryBuilder(\Illuminate\Database\Query\Builder $builder): array
     {
-        return [
+        return array_filter([
             'bindings' => $builder->bindings,
             'aggregate' => $builder->aggregate,
             'columns' => $builder->columns,
@@ -21,6 +21,7 @@ trait QueryBuilderGrammar
             'wheres' => $this->packWheres($builder->wheres),
             'groups' => $builder->groups,
             'havings' => $builder->havings,
+            'groupLimit' => $builder->groupLimit ?? null,
             'orders' => $builder->orders,
             'limit' => $builder->limit,
             'offset' => $builder->offset,
@@ -30,7 +31,7 @@ trait QueryBuilderGrammar
             'unionOrders' => $builder->unionOrders,
 
             'joins' => $this->packJoins($builder->joins), // must be the last
-        ];
+        ], fn ($item) => isset($item));
     }
 
     /**

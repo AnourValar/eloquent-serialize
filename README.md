@@ -1,5 +1,5 @@
 # Serialization for Eloquent's QueryBuilder
-Supports Laravel 6+
+Supports: Laravel 6 - Laravel 11
 
 ## Installation
 
