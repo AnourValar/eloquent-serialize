@@ -6,7 +6,7 @@ use AnourValar\EloquentSerialize\Tests\Models\Post;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 
-class WhereTest extends AbstractTest
+class WhereTest extends AbstractSuite
 {
     /**
      * @return void

@@ -5,7 +5,7 @@ namespace AnourValar\EloquentSerialize\Tests;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 
-class ScopeTest extends AbstractTest
+class ScopeTest extends AbstractSuite
 {
     /**
      * @return void

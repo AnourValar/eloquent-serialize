@@ -7,7 +7,7 @@ use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
 use Illuminate\Database\Schema\Blueprint;
 
-abstract class AbstractTest extends \Orchestra\Testbench\TestCase
+abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
 {
     /**
      * @var \AnourValar\EloquentSerialize\Service

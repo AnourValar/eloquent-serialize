@@ -4,7 +4,7 @@ namespace AnourValar\EloquentSerialize\Tests;
 
 use AnourValar\EloquentSerialize\Tests\Models\User;
 
-class HavingTest extends AbstractTest
+class HavingTest extends AbstractSuite
 {
     /**
      * @return void
