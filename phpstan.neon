@@ -13,6 +13,7 @@ parameters:
         - '#Call to static method#'
         - '#Illuminate\\Database\\Eloquent\\Relations\\HasOneThrough but returns Illuminate\\Database\\Eloquent\\Relations\\HasManyThrough\.#'
         - '#Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\PendingHasThroughRelationship\:\:has\(\)#'
+        - '#Access to an undefined property Illuminate\\Database\\Query\\Builder\:\:\$groupLimit\.#'
 
     excludePaths:
 
