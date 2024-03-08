@@ -58,10 +58,14 @@ trait EloquentBuilderGrammar
             $referenceRelation = clone $relation;
 
             $value($relation); // apply closure
-            $result[$name] = $this->packQueryBuilder($relation->getQuery()->getQuery());
+            $result[$name] = [
+                'query' => $this->packQueryBuilder($relation->getQuery()->getQuery()),
+                'eloquent' => $this->packEloquentBuilder($relation->getQuery()),
+                'extra' => $this->relationExtraData($relation) ? $relation->exportExtraParametersForSerialize() : null,
+            ];
 
             $relation->getQuery()->getModel()->newInstance()->with($name)->getEagerLoads()[$name]($referenceRelation);
-            $this->cleanStaticConstraints($result[$name], $this->packQueryBuilder($referenceRelation->getQuery()->getQuery()));
+            $this->cleanStaticConstraints($result[$name]['query'], $this->packQueryBuilder($referenceRelation->getQuery()->getQuery()));
         }
 
         return $result;
@@ -76,12 +80,24 @@ trait EloquentBuilderGrammar
     {
         foreach ($eagers as &$value) {
             $value = function ($query) use ($value) {
+                if (isset($value['extra'])) {
+                    $query->importExtraParametersForSerialize($value['extra']);
+                }
+
+                // Input argument may be different depends on context
+                while (! ($query instanceof \Illuminate\Database\Eloquent\Builder)) {
+                    $query = $query->getQuery();
+                }
+                if (isset($value['eloquent'])) {
+                    $this->unpackEloquentBuilder($value['eloquent'], $query);
+                }
+
                 // Input argument may be different depends on context
                 while (! ($query instanceof \Illuminate\Database\Query\Builder)) {
                     $query = $query->getQuery();
                 }
 
-                $this->unpackQueryBuilder($value, $query);
+                $this->unpackQueryBuilder(isset($value['query']) ? $value['query'] : $value, $query);
             };
         }
         unset($value);
@@ -127,5 +143,32 @@ trait EloquentBuilderGrammar
                 }
             }
         }
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Relations\Relation $relation
+     * @return bool
+     */
+    private function relationExtraData(\Illuminate\Database\Eloquent\Relations\Relation $relation): bool
+    {
+        \Illuminate\Database\Eloquent\Relations\MorphTo::macro('importExtraParametersForSerialize', function (array $params) {
+            foreach ($params as $key => $value) {
+                $this->$key = $value;
+            }
+        });
+
+        if ($relation instanceof \Illuminate\Database\Eloquent\Relations\MorphTo) {
+            \Illuminate\Database\Eloquent\Relations\MorphTo::macro('exportExtraParametersForSerialize', function () {
+                return [
+                    'morphableEagerLoads' => $this->morphableEagerLoads,
+                    'morphableEagerLoadCounts' => $this->morphableEagerLoadCounts,
+                    'morphableConstraints' => $this->morphableConstraints,
+                ];
+            });
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -6,6 +6,8 @@ use AnourValar\EloquentSerialize\Tests\Models\File;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
 use Illuminate\Database\Schema\Blueprint;
+use AnourValar\EloquentSerialize\Tests\Models\Post;
+use AnourValar\EloquentSerialize\Tests\Models\Tag;
 
 abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
 {
@@ -76,6 +78,14 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
             $table->string('type');
             $table->timestamps();
         });
+
+        $app['db']->connection()->getSchemaBuilder()->create('tags', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->bigInteger('taggable_id');
+            $table->string('taggable_type');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -85,6 +95,9 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
     {
         factory(UserPhoneNote::class)->times(80)->create();
         factory(File::class)->times(40)->create();
+
+        factory(Post::class)->times(10)->create();
+        factory(Tag::class)->times(10)->create();
     }
 
     /**

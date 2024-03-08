@@ -16,7 +16,7 @@
         <ignoreFiles>
             <directory name="vendor"/>
             <directory name="tests/factories/"/>
-            <directory name="tests/models/"/>
+            <directory name="tests/Models/"/>
         </ignoreFiles>
     </projectFiles>
     <plugins>

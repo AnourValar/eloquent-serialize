@@ -8,19 +8,6 @@ use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 class WithCastsTest extends AbstractSuite
 {
     /**
-     * {@inheritDoc}
-     * @see \AnourValar\EloquentSerialize\Tests\AbstractTest::setUp()
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (! method_exists(User::class, 'mergeCasts')) {
-            $this->markTestSkipped('Old version.');
-        }
-    }
-
-    /**
      * @return void
      */
     public function testSimple()
