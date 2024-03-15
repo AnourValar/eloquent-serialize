@@ -61,7 +61,7 @@ trait EloquentBuilderGrammar
             $result[$name] = [
                 'query' => $this->packQueryBuilder($relation->getQuery()->getQuery()),
                 'eloquent' => $this->packEloquentBuilder($relation->getQuery()),
-                'extra' => $this->relationExtraData($relation) ? $relation->exportExtraParametersForSerialize() : null,
+                'extra' => $relation->exportExtraParametersForSerialize(),
             ];
 
             $relation->getQuery()->getModel()->newInstance()->with($name)->getEagerLoads()[$name]($referenceRelation);
@@ -143,32 +143,5 @@ trait EloquentBuilderGrammar
                 }
             }
         }
-    }
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Relations\Relation $relation
-     * @return bool
-     */
-    private function relationExtraData(\Illuminate\Database\Eloquent\Relations\Relation $relation): bool
-    {
-        \Illuminate\Database\Eloquent\Relations\MorphTo::macro('importExtraParametersForSerialize', function (array $params) {
-            foreach ($params as $key => $value) {
-                $this->$key = $value;
-            }
-        });
-
-        if ($relation instanceof \Illuminate\Database\Eloquent\Relations\MorphTo) {
-            \Illuminate\Database\Eloquent\Relations\MorphTo::macro('exportExtraParametersForSerialize', function () {
-                return [
-                    'morphableEagerLoads' => $this->morphableEagerLoads,
-                    'morphableEagerLoadCounts' => $this->morphableEagerLoadCounts,
-                    'morphableConstraints' => $this->morphableConstraints,
-                ];
-            });
-
-            return true;
-        }
-
-        return false;
     }
 }

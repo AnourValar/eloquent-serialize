@@ -33,6 +33,9 @@
       <PossiblyUnusedReturnValue errorLevel="suppress" />
       <MissingTemplateParam errorLevel="suppress" />
       <UnsupportedPropertyReferenceUsage errorLevel="suppress" />
+      <InaccessibleProperty errorLevel="suppress" />
+      <MissingDependency errorLevel="suppress" />
+      <UnusedMethod errorLevel="suppress" />
     </issueHandlers>
 
     <forbiddenFunctions>
