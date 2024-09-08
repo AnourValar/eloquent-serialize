@@ -17,6 +17,14 @@ class User extends \Illuminate\Database\Eloquent\Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function userPhonesChaperone()
+    {
+        return $this->hasMany(UserPhone::class)->chaperone();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function userPhonesSorted()
     {
         return $this->hasMany(UserPhone::class)->orderBy('phone', 'ASC');

@@ -7,6 +7,7 @@ use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 use AnourValar\EloquentSerialize\Tests\Models\Post;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
 use AnourValar\EloquentSerialize\Tests\Models\Tag;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
 class EagerTest extends AbstractSuite
 {
@@ -351,5 +352,20 @@ class EagerTest extends AbstractSuite
                 $morphOne->with('taggable');
             }])
         );
+    }
+
+    /**
+     * @return void
+     */
+    public function testChaperone()
+    {
+        if (! in_array(\Illuminate\Database\Eloquent\Relations\Concerns\SupportsInverseRelations::class, class_uses(HasOneOrMany::class))) {
+            $this->markTestSkipped('Laravel 11.22+ feature');
+        }
+
+        $this->compare(User::with(['userPhones' => fn ($query) => $query->chaperone()]));
+
+        $this->compare(User::with('userPhonesChaperone'));
+        $this->compare(User::with(['userPhonesChaperone' => fn ($query) => $query->withoutChaperone()]));
     }
 }

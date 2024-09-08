@@ -2,6 +2,8 @@
 
 namespace AnourValar\EloquentSerialize\Grammars;
 
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+
 trait ModelGrammar
 {
     /**
@@ -60,6 +62,15 @@ trait ModelGrammar
                     'morphableEagerLoads' => $this->morphableEagerLoads,
                     'morphableEagerLoadCounts' => $this->morphableEagerLoadCounts,
                     'morphableConstraints' => $this->morphableConstraints,
+                ];
+            }
+
+            if (
+                $this instanceof HasOneOrMany
+                && in_array(\Illuminate\Database\Eloquent\Relations\Concerns\SupportsInverseRelations::class, class_uses(HasOneOrMany::class)) // @TODO: >= 11.22
+            ) {
+                return [
+                    'inverseRelationship' => $this->inverseRelationship,
                 ];
             }
 
