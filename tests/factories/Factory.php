@@ -98,6 +98,6 @@ $factory->define(Tag::class, function (Faker $faker, array $attributes) {
         'taggable_id' => function () use ($posts) {
             return $posts->shuffle()->first();
         },
-        'taggable_type' => Post::class,
+        'taggable_type' => $faker->randomElement([Post::class, UserPhone::class]),
     ];
 });

@@ -333,6 +333,7 @@ class EagerTest extends AbstractSuite
             Tag::with(['taggable' => function (\Illuminate\Database\Eloquent\Relations\MorphTo $morphTo) {
                 $morphTo->morphWith([
                     Post::class => ['user'],
+                    UserPhone::class => ['userPhoneNote'],
                 ]);
             }])
         );
@@ -342,6 +343,7 @@ class EagerTest extends AbstractSuite
             Tag::with(['taggable' => function (\Illuminate\Database\Eloquent\Relations\MorphTo $morphTo) {
                 $morphTo->morphWithCount([
                     Post::class => ['user'],
+                    UserPhone::class => ['userPhoneNote'],
                 ]);
             }])
         );
@@ -350,6 +352,32 @@ class EagerTest extends AbstractSuite
         $this->compare(
             Post::with(['tag' => function (\Illuminate\Database\Eloquent\Relations\MorphOne $morphOne) {
                 $morphOne->with('taggable');
+            }])
+        );
+
+        // Nested - closure
+        $this->compare(
+            Tag::with(['taggable' => function (\Illuminate\Database\Eloquent\Relations\MorphTo $morphTo) {
+                $morphTo->morphWith([
+                    Post::class => [
+                        'user' => fn ($query) => $query->with('userPhones')->where('id', '>', 0)->whereIn('sort', [1, 2, 3, 4, 5]),
+                        'tag' => fn ($query) => $query->where('id', '>', 5),
+                    ],
+                    UserPhone::class => ['user', 'userPhoneNote' => fn ($query) => $query->whereNotNull('note')],
+                ]);
+            }])
+        );
+
+        // Nested count - closure
+        $this->compare(
+            Tag::with(['taggable' => function (\Illuminate\Database\Eloquent\Relations\MorphTo $morphTo) {
+                $morphTo->morphWithCount([
+                    Post::class => [
+                        'user' => fn ($query) => $query->with('userPhones')->where('id', '>', 0)->whereIn('sort', [1, 2, 3, 4, 5]),
+                        'tag' => fn ($query) => $query->where('id', '>', 5),
+                    ],
+                    UserPhone::class => ['user', 'userPhoneNote' => fn ($query) => $query->whereNotNull('note')],
+                ]);
             }])
         );
     }

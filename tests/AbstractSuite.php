@@ -97,7 +97,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         factory(File::class)->times(40)->create();
 
         factory(Post::class)->times(10)->create();
-        factory(Tag::class)->times(10)->create();
+        factory(Tag::class)->times(30)->create();
     }
 
     /**

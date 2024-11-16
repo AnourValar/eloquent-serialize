@@ -50,17 +50,24 @@ trait ModelGrammar
      */
     private function setup(): void
     {
-        \Illuminate\Database\Eloquent\Relations\Relation::macro('importExtraParametersForSerialize', function (array $params) {
+        $serializeMorphableEager = fn ($value) => $this->serializeMorphableEager($value);
+        $unserializeMorphableEager = fn ($value) => $this->unserializeMorphableEager($value);
+
+        \Illuminate\Database\Eloquent\Relations\Relation::macro('importExtraParametersForSerialize', function (array $params) use ($unserializeMorphableEager) {
             foreach ($params as $key => $value) {
+                if ($key == 'morphableEagerLoads' || $key == 'morphableEagerLoadCounts') {
+                    $value = $unserializeMorphableEager($value);
+                }
+
                 $this->$key = $value;
             }
         });
 
-        \Illuminate\Database\Eloquent\Relations\Relation::macro('exportExtraParametersForSerialize', function () {
+        \Illuminate\Database\Eloquent\Relations\Relation::macro('exportExtraParametersForSerialize', function () use ($serializeMorphableEager) {
             if ($this instanceof \Illuminate\Database\Eloquent\Relations\MorphTo) {
                 return [
-                    'morphableEagerLoads' => $this->morphableEagerLoads,
-                    'morphableEagerLoadCounts' => $this->morphableEagerLoadCounts,
+                    'morphableEagerLoads' => $serializeMorphableEager($this->morphableEagerLoads),
+                    'morphableEagerLoadCounts' => $serializeMorphableEager($this->morphableEagerLoadCounts),
                     'morphableConstraints' => $this->morphableConstraints,
                 ];
             }
@@ -76,5 +83,68 @@ trait ModelGrammar
 
             return null;
         });
+    }
+
+    /**
+     * @param array $value
+     * @return array
+     * @psalm-suppress UndefinedClass
+     */
+    private function serializeMorphableEager(array $value): array
+    {
+        foreach ($value as $class => &$items) {
+            foreach ($items as $relation => &$item) {
+                if (! is_callable($item)) {
+                    continue;
+                }
+
+                if (! method_exists($class, $relation)) {
+                    throw new \RuntimeException("Serialization error. Does relation '{$relation}' exists in the model '{$class}' ?");
+                }
+
+                // ALT: $obj->cleanStaticConstraints($item['builder'], $obj->packQueryBuilder((new $class)->getQuery()->getQuery()));
+                $eloquentBuilder = (new $class())->$relation()->getModel()->newQuery();
+                $item($eloquentBuilder);
+
+                $item = [
+                    'eloquent' => $this->packEloquentBuilder($eloquentBuilder),
+                    'builder' => $this->packQueryBuilder($eloquentBuilder->getQuery()),
+                ];
+            }
+            unset($item);
+        }
+        unset($items);
+
+        return $value;
+    }
+
+    /**
+     * @param array $value
+     * @return array
+     */
+    private function unserializeMorphableEager(array $value): array
+    {
+        foreach ($value as &$items) {
+            foreach ($items as &$item) {
+                if (! is_array($item)) {
+                    continue;
+                }
+
+                $item = function ($query) use ($item) {
+                    if ($query instanceof \Illuminate\Database\Eloquent\Builder) {
+                        $this->unpackEloquentBuilder($item['eloquent'], $query);
+                        $this->unpackQueryBuilder($item['builder'], $query->getQuery());
+                    } else {
+                        $eloquent = $query->getQuery();
+                        $this->unpackEloquentBuilder($item['eloquent'], $eloquent);
+                        $this->unpackQueryBuilder($item['builder'], $query->getBaseQuery());
+                    }
+                };
+            }
+            unset($item);
+        }
+        unset($items);
+
+        return $value;
     }
 }
