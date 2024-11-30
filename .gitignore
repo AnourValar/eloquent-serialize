@@ -1,5 +1,4 @@
-/vendor
+.phpunit.cache/
+vendor/
 composer.lock
-.idea
-.phpunit.result.cache
-.DS_Store
+.php-cs-fixer.cache

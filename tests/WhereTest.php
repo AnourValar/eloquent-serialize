@@ -259,14 +259,14 @@ class WhereTest extends AbstractSuite
     public function testFullText()
     {
         // Simple
-        $this->compare(Post::whereFullText('body', 'said'), false);
+        $this->compare((new Post())->setConnection('mysql')->whereFullText('body', 'said'), false);
 
         // With options
-        $this->compare(Post::whereFullText('body', 'said', ['language' => 'russian']), false);
+        $this->compare((new Post())->setConnection('mysql')->whereFullText('body', 'said', ['language' => 'russian']), false);
 
         // Inside closure
         $this->compare(
-            User::whereHas('userPhoneNote', function ($query) {
+            (new User())->setConnection('mysql')->whereHas('userPhoneNote', function ($query) {
                 $query->whereFullText('note', 'another', ['language' => 'russian']);
             }),
             false

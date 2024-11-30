@@ -130,9 +130,9 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
     {
         \DB::flushQueryLog();
         if ($execute) {
-            $result = $builder->get();
+            $result = [$builder->toSql(), $builder->getModel()->getConnectionName(), $builder->get()];
         } else {
-            $result = [];
+            $result = [$builder->toSql(), $builder->getModel()->getConnectionName()];
         }
         $logs = \DB::getQueryLog();
 
