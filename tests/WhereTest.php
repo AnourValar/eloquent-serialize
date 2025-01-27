@@ -5,6 +5,7 @@ namespace AnourValar\EloquentSerialize\Tests;
 use AnourValar\EloquentSerialize\Tests\Models\Post;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
+use AnourValar\EloquentSerialize\Tests\Models\Tag;
 
 class WhereTest extends AbstractSuite
 {
@@ -225,6 +226,57 @@ class WhereTest extends AbstractSuite
                     });
                 });
             })
+        );
+
+        // whereDoesntHaveRelation
+        $this->compare(
+            User::whereDoesntHaveRelation(
+                'userPhones',
+                'created_at',
+                '>',
+                '2010-01-01'
+            )
+        );
+
+        $this->compare(
+            User::whereDoesntHaveRelation(
+                'userPhones',
+                'created_at',
+                '2010-01-01'
+            )
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testWhereDoesntHaveMorph()
+    {
+        // whereDoesntHaveMorph
+        $this->compare(
+            Tag::whereDoesntHaveMorph('taggable', [UserPhone::class], function ($query) {
+                $query->where('created_at', '>', now()->subDay());
+            })
+        );
+
+        // whereMorphDoesntHaveRelation
+        $this->compare(
+            Tag::whereMorphDoesntHaveRelation(
+                'taggable',
+                [UserPhone::class],
+                'created_at',
+                '>',
+                now()->subDay()
+            )
+        );
+
+        $this->compare(
+            Tag::whereMorphDoesntHaveRelation(
+                'taggable',
+                [UserPhone::class],
+                'created_at',
+                now()->subDay()
+            )
         );
     }
 

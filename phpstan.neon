@@ -4,7 +4,7 @@ parameters:
         - src
         - tests
 
-    # The level 9 is the highest level
+    # The level 10 is the highest level
     level: 5
 
     ignoreErrors:
@@ -14,13 +14,12 @@ parameters:
         - '#Call to an undefined method#'
         - '#Call to static method#'
         - '#Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Pending#'
-        - '#Property Illuminate\\Database\\Query\\Builder\:\:\$groupLimit \(array\)#'
+        - '#.mergeCasts. will always evaluate to true#'
 
     excludePaths:
 
     checkFunctionNameCase: true
     checkInternalClassCaseSensitivity: true
-    checkAlwaysTrueInstanceof: true
     reportMaybesInMethodSignatures: true
     reportStaticMethodSignatures: true
     checkUninitializedProperties: true
@@ -28,3 +27,6 @@ parameters:
     reportAlwaysTrueInLastCondition: true
     reportWrongPhpDocTypeInVarTag: true
     checkMissingCallableSignature: true
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
+    reportAnyTypeWideningInVarTag: true
