@@ -36,6 +36,7 @@
       <InaccessibleProperty errorLevel="suppress" />
       <MissingDependency errorLevel="suppress" />
       <UnusedMethod errorLevel="suppress" />
+      <MissingOverrideAttribute errorLevel="suppress" />
     </issueHandlers>
 
     <forbiddenFunctions>
