@@ -2,6 +2,7 @@
 
 namespace AnourValar\EloquentSerialize\Tests;
 
+use AnourValar\EloquentSerialize\Tests\Models\Book;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
 use AnourValar\EloquentSerialize\Tests\Models\Post;
@@ -36,12 +37,14 @@ class EagerTest extends AbstractSuite
         $this->compare(User::with('userPhonesPrimary'));
         $this->compare(User::with(['userPhonesSorted', 'userPhonesPrimary']));
         $this->compare(User::query()->with('filesAB', 'filesC', 'filesDE'));
+        $this->compare(User::with('books'));
 
         // with count
         $this->compare(User::withCount('userPhonesSorted'));
         $this->compare(User::withCount('userPhonesPrimary'));
         $this->compare(User::withCount(['userPhonesSorted', 'userPhonesPrimary']));
         $this->compare(User::query()->withCount('filesAB', 'filesC', 'filesDE'));
+        $this->compare(User::withCount('books'));
     }
 
     /**
@@ -54,6 +57,7 @@ class EagerTest extends AbstractSuite
         $this->compare(User::with('userPhones.userPhoneNote:id,user_phone_id,note'));
         $this->compare(User::with(['userPhones' => ['userPhoneNote']]));
         $this->compare(User::with(['userPhones' => fn ($query) => $query->with('userPhoneNote')]));
+        $this->compare(User::with(['books' => fn ($query) => $query->select(['title'])]));
 
         // with (reverse)
         $this->compare(UserPhone::with('user.userPhones'));
@@ -395,5 +399,18 @@ class EagerTest extends AbstractSuite
 
         $this->compare(User::with('userPhonesChaperone'));
         $this->compare(User::with(['userPhonesChaperone' => fn ($query) => $query->withoutChaperone()]));
+    }
+
+    /**
+     * @return void
+     */
+    public function testBelongsToMany()
+    {
+        $this->compare(User::with(['books' => fn ($query) => $query->withPivot('book_id')]));
+
+        $this->compare(User::has('books'));
+        $this->compare(Book::has('users'));
+
+        $this->compare(User::whereHas('books', fn ($query) => $query->where('book_user.id', '>', 0)));
     }
 }

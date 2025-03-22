@@ -2,6 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use AnourValar\EloquentSerialize\Tests\Models\Book;
 use AnourValar\EloquentSerialize\Tests\Models\File;
 use AnourValar\EloquentSerialize\Tests\Models\Tag;
 use AnourValar\EloquentSerialize\Tests\Models\Post;
@@ -99,5 +100,12 @@ $factory->define(Tag::class, function (Faker $faker, array $attributes) {
             return $posts->shuffle()->first();
         },
         'taggable_type' => $faker->randomElement([Post::class, UserPhone::class]),
+    ];
+});
+
+$factory->define(Book::class, function (Faker $faker, array $attributes) {
+    return [
+        'title' => $faker->sentence(),
+        'body' => $faker->sentence(),
     ];
 });

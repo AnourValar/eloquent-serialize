@@ -81,4 +81,12 @@ class User extends \Illuminate\Database\Eloquent\Model
             ->whereIn('type', ['d', 'e'])
             ->whereNotIn('type', ['a', 'b', 'c']);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function books()
+    {
+        return $this->belongsToMany(Book::class);
+    }
 }

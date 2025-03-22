@@ -2,6 +2,7 @@
 
 namespace AnourValar\EloquentSerialize\Tests;
 
+use AnourValar\EloquentSerialize\Tests\Models\Book;
 use AnourValar\EloquentSerialize\Tests\Models\File;
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhoneNote;
@@ -86,6 +87,18 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
             $table->string('taggable_type');
             $table->timestamps();
         });
+
+        $app['db']->connection()->getSchemaBuilder()->create('book_user', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('user_id');
+            $table->integer('book_id');
+        });
+        $app['db']->connection()->getSchemaBuilder()->create('books', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->text('body');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -98,14 +111,23 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
 
         factory(Post::class)->times(10)->create();
         factory(Tag::class)->times(30)->create();
+
+        $users = User::get();
+        factory(Book::class)->times(20)->create()->each(function ($book) use ($users) {
+            foreach ($users as $user) {
+                if (mt_rand(0, 1)) {
+                    $user->books()->attach($book->id);
+                }
+            }
+        });
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation $builder
      * @param bool $execute
      * @return void
      */
-    protected function compare(\Illuminate\Database\Eloquent\Builder $builder, bool $execute = true): void
+    protected function compare(\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation $builder, bool $execute = true): void
     {
         $referenceBuilder = clone $builder;
         $referenceSerialize = $this->service->serialize($builder);
@@ -122,11 +144,11 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation $builder
      * @param bool $execute
      * @return string
      */
-    private function getScheme(\Illuminate\Database\Eloquent\Builder $builder, bool $execute): string
+    private function getScheme(\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\Relation $builder, bool $execute): string
     {
         \DB::flushQueryLog();
         if ($execute) {
