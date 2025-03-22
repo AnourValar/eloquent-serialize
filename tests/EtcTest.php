@@ -43,7 +43,7 @@ class EtcTest extends AbstractSuite
         $this->compare(UserPhone::first()->user()); // BelongsTo
 
         $this->compare(UserPhone::first()->tag()); // MorphOne
-        $this->compare(Tag::first()->morphTo()); // MorphTo
+        $this->compare(Tag::first()->taggable()); // MorphTo
     }
 
     /**
