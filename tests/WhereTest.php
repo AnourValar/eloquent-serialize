@@ -334,4 +334,24 @@ class WhereTest extends AbstractSuite
             UserPhone::whereBelongsTo(UserPhone::has('user')->first()->user)
         );
     }
+
+    /**
+     * @return void
+     */
+    public function testDates()
+    {
+        if (! method_exists(User::query()->getQuery(), 'wherePast')) {
+            $this->markTestSkipped('Feature is not available');
+        }
+
+        $this->compare(User::wherePast('created_at'));
+        $this->compare(User::whereNowOrPast('created_at'));
+        $this->compare(User::whereFuture('created_at'));
+        $this->compare(User::whereNowOrFuture('created_at'));
+        $this->compare(User::whereToday('created_at'));
+        $this->compare(User::whereBeforeToday('created_at'));
+        $this->compare(User::whereTodayOrBefore('created_at'));
+        $this->compare(User::whereAfterToday('created_at'));
+        $this->compare(User::whereTodayOrAfter('created_at'));
+    }
 }

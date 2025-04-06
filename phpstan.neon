@@ -15,6 +15,7 @@ parameters:
         - '#Call to static method#'
         - '#Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Pending#'
         - '#.mergeCasts. will always evaluate to true#'
+        - '#Call to function method\_exists\(\) with#'
 
     excludePaths:
 
