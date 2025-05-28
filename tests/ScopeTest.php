@@ -88,4 +88,30 @@ class ScopeTest extends AbstractSuite
                 ->withoutGlobalScope(\AnourValar\EloquentSerialize\Tests\Scopes\PrimaryScope::class)
         );
     }
+
+    /**
+     * @return void
+     */
+    public function testPreApply()
+    {
+        $this->compare(
+            User::query()
+                ->withGlobalScope('userPhones', fn ($builder) => $builder->where('id', '<', 30)->has('userPhones'))
+                ->applyScopes()
+        );
+
+        $this->compare(
+            User::query()
+                ->withTrashed()
+                ->withGlobalScope('userPhones', fn ($builder) => $builder->where('id', '<', 30)->has('userPhones'))
+                ->applyScopes()
+        );
+
+        $this->compare(
+            User::query()
+                ->onlyTrashed()
+                ->withGlobalScope('userPhones', fn ($builder) => $builder->where('id', '<', 30)->has('userPhones'))
+                ->applyScopes()
+        );
+    }
 }
