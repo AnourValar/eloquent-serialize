@@ -20,7 +20,6 @@ $package = \EloquentSerialize::serialize(
 );
 ```
 
-
 ### Unserialize
 ```php
 $builder = \EloquentSerialize::unserialize($package);

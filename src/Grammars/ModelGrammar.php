@@ -16,6 +16,10 @@ trait ModelGrammar
     {
         $this->setup();
 
+        // Global scopes handle
+        $builder = $builder->applyScopes();
+        $builder->withoutGlobalScopes(array_keys($builder->getAllGlobalScopes()));
+
         return new \AnourValar\EloquentSerialize\Package([
             'model' => get_class($builder->getModel()),
             'connection' => $builder->getModel()->getConnectionName(),
@@ -52,6 +56,10 @@ trait ModelGrammar
     {
         $serializeMorphableEager = fn ($value) => $this->serializeMorphableEager($value);
         $unserializeMorphableEager = fn ($value) => $this->unserializeMorphableEager($value);
+
+        \Illuminate\Database\Eloquent\Builder::macro('getAllGlobalScopes', function () {
+            return $this->scopes;
+        });
 
         \Illuminate\Database\Eloquent\Relations\Relation::macro('importExtraParametersForSerialize', function (array $params) use ($unserializeMorphableEager) {
             foreach ($params as $key => $value) {

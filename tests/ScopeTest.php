@@ -4,6 +4,7 @@ namespace AnourValar\EloquentSerialize\Tests;
 
 use AnourValar\EloquentSerialize\Tests\Models\User;
 use AnourValar\EloquentSerialize\Tests\Models\UserPhone;
+use AnourValar\EloquentSerialize\Tests\Models\UserPhonePrimary;
 
 class ScopeTest extends AbstractSuite
 {
@@ -17,6 +18,9 @@ class ScopeTest extends AbstractSuite
 
         // Reverted
         $this->compare(User::withTrashed()->withoutTrashed());
+
+        // Etc
+        $this->compare(User::withTrashed()->onlyTrashed());
     }
 
     /**
@@ -39,12 +43,49 @@ class ScopeTest extends AbstractSuite
      */
     public function testGlobal()
     {
-        $query = User::withGlobalScope('foo', fn ($builder) => $builder->where('id', '<', 20));
+        \Date::setTestNow('2025-05-28 19:00:00');
 
-        /** Global scopes - are the part of statically description of the model */
-        $this->assertNotSame(
-            $query->toSql(),
-            $this->service->unserialize($this->service->serialize($query))->toSql()
+        // Model with SoftDelete
+        $this->compare(
+            User::withGlobalScope('userPhones', fn ($builder) => $builder->where('id', '<', 30)->has('userPhones'))
+        );
+
+        $this->compare(
+            User::withTrashed()->withGlobalScope('userPhones', fn ($builder) => $builder->where('id', '<', 30)->has('userPhones'))
+        );
+
+        $this->compare(
+            User::onlyTrashed()->withGlobalScope('userPhones', fn ($builder) => $builder->where('id', '<', 30)->has('userPhones'))
+        );
+
+
+        // Model without SoftDelete
+        $this->compare(
+            UserPhone::withGlobalScope('user', fn ($builder) => $builder->where('id', '<', 30)->has('user'))
+        );
+
+        $this->compare(
+            UserPhone::withGlobalScope('user', fn ($builder) => $builder->has('user123'))->withoutGlobalScope('user')
+        );
+
+
+        // Model with alt global scope
+        $this->compare(
+            UserPhonePrimary::query()
+        );
+
+        $this->compare(
+            UserPhonePrimary::withGlobalScope('foo', fn ($builder) => $builder->where('id', '<', 30))
+        );
+
+        $this->compare(
+            UserPhonePrimary::withoutGlobalScope(\AnourValar\EloquentSerialize\Tests\Scopes\PrimaryScope::class)
+        );
+
+        $this->compare(
+            UserPhonePrimary::query()
+                ->withGlobalScope('foo', fn ($builder) => $builder->where('id', '<', 30))
+                ->withoutGlobalScope(\AnourValar\EloquentSerialize\Tests\Scopes\PrimaryScope::class)
         );
     }
 }

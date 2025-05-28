@@ -16,6 +16,7 @@ parameters:
         - '#Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Pending#'
         - '#.mergeCasts. will always evaluate to true#'
         - '#Call to function method\_exists\(\) with#'
+        - '#Access to an undefined property Illuminate\\Database\\Query\\Builder\:\:\$scopes#'
 
     excludePaths:
 
