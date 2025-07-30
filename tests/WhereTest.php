@@ -354,4 +354,16 @@ class WhereTest extends AbstractSuite
         $this->compare(User::whereAfterToday('created_at'));
         $this->compare(User::whereTodayOrAfter('created_at'));
     }
+
+    /**
+     * @return void
+     */
+    public function testEtc()
+    {
+        if (! method_exists(User::query()->getQuery(), 'whereValueBetween')) {
+            $this->markTestSkipped('Feature is not available');
+        }
+
+        $this->compare(User::whereValueBetween(now(), ['created_at', 'updated_at']));
+    }
 }

@@ -12,6 +12,8 @@ use AnourValar\EloquentSerialize\Tests\Models\Tag;
 
 abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
 {
+    use \Illuminate\Foundation\Testing\DatabaseTransactions;
+
     /**
      * @var \AnourValar\EloquentSerialize\Service
      */
@@ -34,6 +36,13 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
 
         $this->service = \App::make(\AnourValar\EloquentSerialize\Service::class);
     }
+
+    /*protected function getPackageProviders($app)
+    {
+        return [
+            // package service provider
+        ];
+    }*/
 
     /**
      * @param \Illuminate\Foundation\Application $app
