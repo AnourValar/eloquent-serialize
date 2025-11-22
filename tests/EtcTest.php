@@ -24,6 +24,11 @@ class EtcTest extends AbstractSuite
         );
 
         $this->compare(
+            (new User())->setConnection('mysql')->lock('FOR UPDATE NOWAIT'),
+            false
+        );
+
+        $this->compare(
             (new User())->setConnection('mysql')->sharedLock()->where('id', '>', 0),
             false
         );
