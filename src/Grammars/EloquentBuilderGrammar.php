@@ -2,29 +2,24 @@
 
 namespace AnourValar\EloquentSerialize\Grammars;
 
+use Laravel\SerializableClosure\SerializableClosure;
+
 trait EloquentBuilderGrammar
 {
     /**
      * Serialize state for \Illuminate\Database\Eloquent\Builder
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @return array
      */
     protected function packEloquentBuilder(\Illuminate\Database\Eloquent\Builder $builder): array
     {
         return [
-            'with' => $this->getEagers($builder), // preloaded ("eager") relations
-            'removed_scopes' => $builder->removedScopes(), // global scopes
+            'with' => $this->getEagers($builder),
+            'removed_scopes' => $builder->removedScopes(),
             'casts' => $builder->getModel()->getCasts(),
         ];
     }
 
     /**
      * Unserialize state for \Illuminate\Database\Eloquent\Builder
-     *
-     * @param array $data
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @return void
      */
     protected function unpackEloquentBuilder(array $data, \Illuminate\Database\Eloquent\Builder &$builder): void
     {
@@ -42,74 +37,32 @@ trait EloquentBuilderGrammar
         }
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @return array
-     */
     private function getEagers(\Illuminate\Database\Eloquent\Builder $builder): array
     {
         $result = [];
 
         foreach ($builder->getEagerLoads() as $name => $value) {
-            $relation = $builder;
-            foreach (explode('.', $name) as $part) {
-                $relation = $relation->getRelation($part); // get a relation without "constraints"
-            }
-            $referenceRelation = clone $relation;
-
-            $value($relation); // apply closure
+            // Simply serialize the closure directly - no execution, no detection
             $result[$name] = [
-                'query' => $this->packQueryBuilder($relation->getQuery()->getQuery()),
-                'eloquent' => $this->packEloquentBuilder($relation->getQuery()),
-                'extra' => $relation->exportExtraParametersForSerialize(),
+                'closure' => serialize(new SerializableClosure($value)),
             ];
-
-            $relation->getQuery()->getModel()->newInstance()->with($name)->getEagerLoads()[$name]($referenceRelation);
-            $this->cleanStaticConstraints($result[$name]['query'], $this->packQueryBuilder($referenceRelation->getQuery()->getQuery()));
         }
 
         return $result;
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param array $eagers
-     * @return void
-     */
     private function setEagers(\Illuminate\Database\Eloquent\Builder $builder, array $eagers): void
     {
-        foreach ($eagers as &$value) {
-            $value = function ($query) use ($value) {
-                if (isset($value['extra'])) {
-                    $query->importExtraParametersForSerialize($value['extra']);
-                }
-
-                // Input argument may be different depends on context
-                while (! ($query instanceof \Illuminate\Database\Eloquent\Builder)) {
-                    $query = $query->getQuery();
-                }
-                if (isset($value['eloquent'])) {
-                    $this->unpackEloquentBuilder($value['eloquent'], $query);
-                }
-
-                // Input argument may be different depends on context
-                while (! ($query instanceof \Illuminate\Database\Query\Builder)) {
-                    $query = $query->getQuery();
-                }
-
-                $this->unpackQueryBuilder(isset($value['query']) ? $value['query'] : $value, $query);
-            };
+        foreach ($eagers as $name => &$value) {
+            // Unserialize the closure and restore it
+            $serializedClosure = unserialize($value['closure']);
+            $value = $serializedClosure->getClosure();
         }
         unset($value);
 
         $builder->setEagerLoads($eagers);
     }
 
-    /**
-     * @param array $packedQueryBuilder
-     * @param array $packedReferenceQueryBuilder
-     * @return void
-     */
     private function cleanStaticConstraints(array &$packedQueryBuilder, array $packedReferenceQueryBuilder): void
     {
         $properties = [
