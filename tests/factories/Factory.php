@@ -13,6 +13,7 @@ use Faker\Generator as Faker;
 
 $factory->define(User::class, function (Faker $faker, array $attributes) {
     return [
+        'pid' => null,
         'title' => 'admin',
         'sort' => $faker->numberBetween(1, 10),
         'meta' => $faker->randomElement([json_encode(['foo' => 'a']), json_encode(['foo' => ['bar' => ['hello']]])]),

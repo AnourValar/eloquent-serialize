@@ -2,18 +2,21 @@
 
 namespace AnourValar\EloquentSerialize\Grammars;
 
+use Laravel\SerializableClosure\SerializableClosure;
+
 trait EloquentBuilderGrammar
 {
     /**
      * Serialize state for \Illuminate\Database\Eloquent\Builder
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param array|null $parentModels
      * @return array
      */
-    protected function packEloquentBuilder(\Illuminate\Database\Eloquent\Builder $builder): array
+    protected function packEloquentBuilder(\Illuminate\Database\Eloquent\Builder $builder, ?array $parentModels = null): array
     {
         return [
-            'with' => $this->getEagers($builder), // preloaded ("eager") relations
+            'with' => $this->getEagers($builder, $parentModels ?? []), // preloaded ("eager") relations
             'removed_scopes' => $builder->removedScopes(), // global scopes
             'casts' => $builder->getModel()->getCasts(),
         ];
@@ -44,9 +47,10 @@ trait EloquentBuilderGrammar
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param $parentModels
      * @return array
      */
-    private function getEagers(\Illuminate\Database\Eloquent\Builder $builder): array
+    private function getEagers(\Illuminate\Database\Eloquent\Builder $builder, array $parentModels): array
     {
         $result = [];
 
@@ -57,10 +61,16 @@ trait EloquentBuilderGrammar
             }
             $referenceRelation = clone $relation;
 
+            if (count(array_filter($parentModels, fn ($item) => $item == get_class($referenceRelation->getModel()))) > 1) {
+                $result[$name] = ['closure' => serialize(new SerializableClosure($value))]; // recursion detected...
+                continue;
+            }
+            $parentModels[] = get_class($builder->getModel());
+
             $value($relation); // apply closure
             $result[$name] = [
                 'query' => $this->packQueryBuilder($relation->getQuery()->getQuery()),
-                'eloquent' => $this->packEloquentBuilder($relation->getQuery()),
+                'eloquent' => $this->packEloquentBuilder($relation->getQuery(), $parentModels),
                 'extra' => $relation->exportExtraParametersForSerialize(),
             ];
 
@@ -79,6 +89,11 @@ trait EloquentBuilderGrammar
     private function setEagers(\Illuminate\Database\Eloquent\Builder $builder, array $eagers): void
     {
         foreach ($eagers as &$value) {
+            if (isset($value['closure'])) {
+                $value = unserialize($value['closure'])->getClosure();
+                continue;
+            }
+
             $value = function ($query) use ($value) {
                 if (isset($value['extra'])) {
                     $query->importExtraParametersForSerialize($value['extra']);

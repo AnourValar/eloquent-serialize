@@ -52,6 +52,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
     {
         $app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('pid')->nullable();
             $table->string('title');
             $table->integer('sort');
             $table->jsonb('meta')->nullable();
@@ -123,10 +124,17 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
 
         $users = User::get();
         factory(Book::class)->times(20)->create()->each(function ($book) use ($users) {
+            $prev = null;
             foreach ($users as $user) {
                 if (mt_rand(0, 1)) {
                     $user->books()->attach($book->id);
                 }
+
+                if (mt_rand(0, 1) && $prev) {
+                    $user->forceFill(['pid' => $prev->id])->save();
+                }
+
+                $prev = $user;
             }
         });
     }
@@ -143,7 +151,7 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
 
         for ($i = 1; $i <= 3; $i++) {
             $builder = $this->service->serialize($builder);
-            $this->assertSame($referenceSerialize, $builder, "#$i");
+            $this->assertSame($this->normalizeSerialize($referenceSerialize), $this->normalizeSerialize($builder), "#$i");
 
             $builder = json_encode($builder);
             $builder = json_decode($builder, true);
@@ -173,5 +181,14 @@ abstract class AbstractSuite extends \Orchestra\Testbench\TestCase
         unset($log);
 
         return json_encode(['query' => $logs, 'result' => $result], JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * @param string $serialize
+     * @return string
+     */
+    private function normalizeSerialize(string $serialize): string
+    {
+        return preg_replace('#\"000000000000[a-f\d]{5}000000000000000\"#u', '"{!!!}"', $serialize);
     }
 }

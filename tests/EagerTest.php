@@ -413,4 +413,18 @@ class EagerTest extends AbstractSuite
 
         $this->compare(User::whereHas('books', fn ($query) => $query->where('book_user.id', '>', 0)));
     }
+
+    /**
+     * @return void
+     */
+    public function testRecursion()
+    {
+        $this->compare(User::with('parent'));
+
+        $this->compare(UserPhone::with(['user' => fn ($query) => $query->with('parent')]));
+        $this->compare(UserPhone::with(['user' => fn ($query) => $query->withParent()]));
+
+        $this->compare(UserPhone::with(['user.parent' => fn ($query) => $query->with('parent')]));
+        $this->compare(UserPhone::with(['user.parent' => fn ($query) => $query->withParent()]));
+    }
 }

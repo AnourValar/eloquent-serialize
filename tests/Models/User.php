@@ -89,4 +89,20 @@ class User extends \Illuminate\Database\Eloquent\Model
     {
         return $this->belongsToMany(Book::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'pid');
+    }
+
+    /**
+     * Scope
+     */
+    public function scopeWithParent($query)
+    {
+        return $query->with('parent', fn ($query) => $query->withParent());
+    }
 }
