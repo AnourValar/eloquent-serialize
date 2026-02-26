@@ -1,27 +1,44 @@
 {
     "name": "anourvalar/eloquent-serialize",
     "description": "Laravel Query Builder (Eloquent) serialization",
-    "keywords": ["laravel", "query", "builder", "querybuilder", "anourvalar", "serialize", "serialization", "eloquent", "serializable", "job", "queue", "copy"],
+    "keywords": [
+        "laravel",
+        "query",
+        "builder",
+        "querybuilder",
+        "anourvalar",
+        "serialize",
+        "serialization",
+        "eloquent",
+        "serializable",
+        "job",
+        "queue",
+        "copy"
+    ],
     "homepage": "https://github.com/AnourValar/eloquent-serialize",
     "license": "MIT",
     "require": {
         "php": "^7.4|^8.0",
-        "laravel/framework": "^8.0|^9.0|^10.0|^11.0|^12.0"
+        "laravel/framework": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5|^10.5|^11.0",
-        "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^9.5|^10.5|^11.0|^12.5.12",
+        "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
         "laravel/legacy-factories": "^1.1",
         "phpstan/phpstan": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.26",
-        "squizlabs/php_codesniffer": "^3.7",
+        "squizlabs/php_codesniffer": "^3.7|^4.0",
         "psalm/plugin-laravel": "^2.8|^3.0"
     },
     "autoload": {
-        "psr-4": {"AnourValar\\EloquentSerialize\\": "src/"}
+        "psr-4": {
+            "AnourValar\\EloquentSerialize\\": "src/"
+        }
     },
     "autoload-dev": {
-        "psr-4": {"AnourValar\\EloquentSerialize\\Tests\\": "tests/"}
+        "psr-4": {
+            "AnourValar\\EloquentSerialize\\Tests\\": "tests/"
+        }
     },
     "extra": {
         "laravel": {
