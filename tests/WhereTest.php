@@ -337,6 +337,7 @@ class WhereTest extends AbstractSuite
 
     /**
      * @return void
+     * @psalm-suppress UndefinedClass
      */
     public function testDates()
     {
@@ -353,6 +354,30 @@ class WhereTest extends AbstractSuite
         $this->compare(User::whereTodayOrBefore('created_at'));
         $this->compare(User::whereAfterToday('created_at'));
         $this->compare(User::whereTodayOrAfter('created_at'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testVector()
+    {
+        if (! method_exists(User::query()->getQuery(), 'whereVectorDistanceLessThan')) {
+            $this->markTestSkipped('Laravel 13.0+ feature');
+        }
+
+        config(['database.default' => 'pgsql']);
+        $queryEmbedding = [52.52, 13.40];
+
+        $this->compare(
+            User::query()
+                ->select('*')
+                ->selectVectorDistance('embedding', $queryEmbedding, as: 'distance')
+                ->whereVectorDistanceLessThan('embedding', $queryEmbedding, maxDistance: 0.3)
+                ->orderByVectorDistance('embedding', $queryEmbedding)
+                ->whereVectorSimilarTo('embedding', $queryEmbedding, minSimilarity: 0.4)
+                ->limit(10),
+            false
+        );
     }
 
     /**

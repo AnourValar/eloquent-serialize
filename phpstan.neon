@@ -17,6 +17,7 @@ parameters:
         - '#.mergeCasts. will always evaluate to true#'
         - '#Call to function method\_exists\(\) with#'
         - '#Access to an undefined property Illuminate\\Database\\Query\\Builder\:\:\$scopes#'
+        - '#Illuminate\\Database\\Query\\Builder given#'
 
     excludePaths:
 
