@@ -85,4 +85,36 @@ class JoinTest extends AbstractSuite
             })
         );
     }
+
+    /**
+     * @return void
+     */
+    public function testLateralSubQuery()
+    {
+        if (!method_exists(User::query()->getQuery(), 'leftJoinLateral')) {
+            $this->markTestSkipped('Laravel 11.0+ feature');
+        }
+
+        config(['database.default' => 'pgsql']);
+
+        $latestPost = Post::select('title')
+            ->whereColumn('posts.user_id', 'users.id')
+            ->orderByDesc('created_at')
+            ->limit(1);
+
+        $this->compare(
+            User::query()
+                ->select('users.*')
+                ->addSelect('latest_post.title')
+                ->leftJoinLateral($latestPost, 'latest_post'),
+            false
+        );
+
+        $this->compare(
+            User::query()
+                ->select('users.*')
+                ->joinLateral($latestPost, 'latest_post'),
+            false
+        );
+    }
 }

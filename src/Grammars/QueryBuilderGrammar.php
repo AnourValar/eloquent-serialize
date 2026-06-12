@@ -116,10 +116,13 @@ trait QueryBuilderGrammar
         }
 
         foreach ($joins as &$item) {
-            $item = array_replace(
-                ['type' => $item->type, 'table' => $item->table],
-                $this->packQueryBuilder($item)
-            );
+            $head = ['type' => $item->type, 'table' => $item->table];
+
+            if ($item instanceof \Illuminate\Database\Query\JoinLateralClause) {
+                $head['lateral'] = true;
+            }
+
+            $item = array_replace($head, $this->packQueryBuilder($item));
         }
         unset($item);
 
@@ -179,8 +182,12 @@ trait QueryBuilderGrammar
         }
 
         foreach ($joins as &$item) {
-            $parentQuery = new \Illuminate\Database\Query\JoinClause($builder, $item['type'], $item['table']);
-            unset($item['type'], $item['table']);
+            $class = !empty($item['lateral'])
+                ? \Illuminate\Database\Query\JoinLateralClause::class
+                : \Illuminate\Database\Query\JoinClause::class;
+
+            $parentQuery = new $class($builder, $item['type'], $item['table']);
+            unset($item['type'], $item['table'], $item['lateral']);
 
             $item = $this->unpackQueryBuilder($item, $parentQuery);
         }
