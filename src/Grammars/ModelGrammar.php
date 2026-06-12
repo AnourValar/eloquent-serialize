@@ -96,7 +96,6 @@ trait ModelGrammar
     /**
      * @param array $value
      * @return array
-     * @psalm-suppress UndefinedClass
      */
     private function serializeMorphableEager(array $value): array
     {

@@ -388,7 +388,6 @@ class EagerTest extends AbstractSuite
 
     /**
      * @return void
-     * @psalm-suppress UndefinedClass
      */
     public function testChaperone()
     {
