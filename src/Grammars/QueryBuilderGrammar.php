@@ -117,7 +117,7 @@ trait QueryBuilderGrammar
 
         foreach ($joins as &$item) {
             $item = array_replace(
-                ['type' => $item->type, 'table' => $item->table],
+                ['class' => get_class($item), 'type' => $item->type, 'table' => $item->table],
                 $this->packQueryBuilder($item)
             );
         }
@@ -179,8 +179,8 @@ trait QueryBuilderGrammar
         }
 
         foreach ($joins as &$item) {
-            $parentQuery = new \Illuminate\Database\Query\JoinClause($builder, $item['type'], $item['table']);
-            unset($item['type'], $item['table']);
+            $parentQuery = new ($item['class'])($builder, $item['type'], $item['table']);
+            unset($item['class'], $item['type'], $item['table']);
 
             $item = $this->unpackQueryBuilder($item, $parentQuery);
         }

@@ -85,4 +85,55 @@ class JoinTest extends AbstractSuite
             })
         );
     }
+
+    /**
+     * @return array
+     */
+    public static function lateralDataProvider(): array
+    {
+        return [
+            ['mysql'],
+            ['pgsql'],
+        ];
+    }
+
+    /**
+     * @dataProvider lateralDataProvider
+     *
+     * @param string $driver
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('lateralDataProvider')]
+    public function testLateral(string $driver)
+    {
+        if (! method_exists(User::query()->getQuery(), 'joinLateral')) {
+            $this->markTestSkipped('Laravel 11.0+ feature');
+        }
+
+        config(["database.connections.testing_{$driver}" => ['driver' => $driver, 'database' => 'testing']]);
+
+        // joinLateral
+        $this->compare(
+            User::on("testing_{$driver}")->joinLateral(function ($query) {
+                $query
+                    ->from('posts')
+                    ->whereColumn('posts.user_id', 'users.id')
+                    ->orderByDesc('posts.created_at')
+                    ->limit(2);
+            }, 'latest_posts'),
+            false
+        );
+
+        // leftJoinLateral
+        $this->compare(
+            User::on("testing_{$driver}")->leftJoinLateral(function ($query) {
+                $query
+                    ->from('posts')
+                    ->whereColumn('posts.user_id', 'users.id')
+                    ->where('posts.title', '=', 'abc')
+                    ->limit(1);
+            }, 'latest_posts'),
+            false
+        );
+    }
 }
