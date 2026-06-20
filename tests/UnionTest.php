@@ -42,6 +42,36 @@ class UnionTest extends AbstractSuite
     /**
      * @return void
      */
+    public function testOrderLimitOffset()
+    {
+        // orderBy / limit / offset applied after union() populate unionOrders / unionLimit / unionOffset
+        $this->compare(
+            User::whereIn('title', ['a', 'b'])
+                ->union(User::whereIn('id', ['1', '2']))
+                ->orderBy('id', 'DESC')
+                ->limit(5)
+                ->offset(2)
+        );
+
+        // unionOrders only (multiple directives, including raw)
+        $this->compare(
+            User::where('id', '<', 5)
+                ->union(User::where('id', '>', 10))
+                ->orderBy('title', 'ASC')
+                ->orderByRaw('id DESC')
+        );
+
+        // unionLimit without unionOffset
+        $this->compare(
+            User::where('id', '<', 5)
+                ->union(User::where('id', '>', 10))
+                ->limit(3)
+        );
+    }
+
+    /**
+     * @return void
+     */
     public function testExpression()
     {
         $union1 = User::where(function ($query) {
