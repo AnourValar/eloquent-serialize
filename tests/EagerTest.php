@@ -389,6 +389,22 @@ class EagerTest extends AbstractSuite
     /**
      * @return void
      */
+    public function testMorphToUnknownRelation()
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $this->compare(
+            Tag::with(['taggable' => function (\Illuminate\Database\Eloquent\Relations\MorphTo $morphTo) {
+                $morphTo->morphWith([
+                    Post::class => ['unknownRelation' => fn ($query) => $query->where('id', '>', 0)],
+                ]);
+            }])
+        );
+    }
+
+    /**
+     * @return void
+     */
     public function testChaperone()
     {
         if (! in_array(\Illuminate\Database\Eloquent\Relations\Concerns\SupportsInverseRelations::class, class_uses(HasOneOrMany::class))) {
