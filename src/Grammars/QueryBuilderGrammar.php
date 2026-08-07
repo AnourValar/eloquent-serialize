@@ -30,6 +30,7 @@ trait QueryBuilderGrammar
             'unionOffset' => $builder->unionOffset,
             'unionOrders' => $builder->unionOrders,
             'lock' => $builder->lock,
+            'useWritePdo' => $builder->useWritePdo,
 
             'joins' => $this->packJoins($builder->joins), // must be the last
         ], fn ($item) => isset($item));

@@ -8,7 +8,6 @@ parameters:
     level: 5
 
     ignoreErrors:
-        - '#Access to protected property#'
         - '#should return#'
         - '#Call to an undefined static method#'
         - '#Call to an undefined method#'

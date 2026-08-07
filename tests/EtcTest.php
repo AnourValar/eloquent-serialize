@@ -37,6 +37,27 @@ class EtcTest extends AbstractSuite
     /**
      * @return void
      */
+    public function testLockUseWritePdo()
+    {
+        $builders = [
+            'lockForUpdate' => (new User())->setConnection('mysql')->lockForUpdate(),
+            'lock' => (new User())->setConnection('mysql')->lock('FOR UPDATE NOWAIT'),
+            'sharedLock' => (new User())->setConnection('mysql')->sharedLock(),
+            'useWritePdo' => (new User())->setConnection('mysql')->useWritePdo(),
+        ];
+
+        foreach ($builders as $name => $builder) {
+            $this->assertTrue($builder->getQuery()->useWritePdo, $name); // sanity check
+
+            $builder = $this->service->unserialize($this->service->serialize($builder));
+
+            $this->assertTrue($builder->getQuery()->useWritePdo, $name);
+        }
+    }
+
+    /**
+     * @return void
+     */
     public function testPackRelation()
     {
         $this->compare(UserPhone::first()->userPhoneNote()); // HasOne [not with chaperone!]
