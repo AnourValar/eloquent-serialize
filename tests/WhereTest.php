@@ -382,6 +382,20 @@ class WhereTest extends AbstractSuite
     /**
      * @return void
      */
+    public function testBinary()
+    {
+        if (! method_exists(User::query()->getQuery(), 'whereBinary')) {
+            $this->markTestSkipped('Feature is not available');
+        }
+
+        config(['database.default' => 'mysql']);
+
+        $this->compare(User::whereBinary('title', 'FooBar'), false);
+    }
+
+    /**
+     * @return void
+     */
     public function testEtc()
     {
         if (! method_exists(User::query()->getQuery(), 'whereValueBetween')) {
